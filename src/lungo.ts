@@ -5,6 +5,29 @@ import { ILungo, IMiddleware, INextFunc, IRequest, IResponse } from './interface
 export class Lungo implements ILungo {
   stack: IMiddleware[] = []
 
+  use(middleware: IMiddleware): void {
+    if (typeof middleware !== 'function') {
+      throw new Error('Middleware must be a function.')
+    }
+    this.stack.push(middleware)
+  }
+
+  listen(port: string | number): void {
+    if (!port) {
+      throw new Error('Port is not provided.')
+    }
+
+    const handler = (req: IRequest, res: IResponse) => {
+      this.handle(req, res, (err: Error) => {
+        if (!err) return
+
+        res.writeHead(StatusCodes.INTERNAL_SERVER_ERROR)
+        res.end(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR))
+      })
+    }
+    http.createServer(handler).listen(port)
+  }
+
   handle(req: IRequest, res: IResponse, callback: Function): void {
     let index = 0
 
@@ -24,21 +47,5 @@ export class Lungo implements ILungo {
       }
     }
     next()
-  }
-
-  listen(port: string | number): void {
-    if (!port) {
-      throw new Error('Port is not provided.')
-    }
-
-    const handler = (req: IRequest, res: IResponse) => {
-      this.handle(req, res, (err: Error) => {
-        if (!err) return
-
-        res.writeHead(StatusCodes.INTERNAL_SERVER_ERROR)
-        res.end(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR))
-      })
-    }
-    http.createServer(handler).listen(port)
   }
 }
