@@ -1,4 +1,4 @@
-import http from 'http'
+import http, { Server } from 'http'
 import { StatusCodes, getReasonPhrase } from 'http-status-codes'
 import { ILungo, IMiddleware, INextFunc, IRequest, IResponse } from './interfaces'
 
@@ -12,7 +12,7 @@ export class Lungo implements ILungo {
     this.stack.push(middleware)
   }
 
-  listen(port: string | number): void {
+  listen(port: string | number): Server {
     if (!port) {
       throw new Error('Port is not provided.')
     }
@@ -25,7 +25,7 @@ export class Lungo implements ILungo {
         res.end(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR))
       })
     }
-    http.createServer(handler).listen(port)
+    return http.createServer(handler).listen(port)
   }
 
   handle(req: IRequest, res: IResponse, callback: Function): void {
