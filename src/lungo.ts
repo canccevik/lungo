@@ -5,11 +5,13 @@ import { ILungo, IMiddleware, INextFunc, IRequest, IResponse } from './interface
 export class Lungo implements ILungo {
   stack: IMiddleware[] = []
 
-  use(middleware: IMiddleware): void {
-    if (typeof middleware !== 'function') {
+  use(...middlewares: IMiddleware[]): void {
+    const isAllParamsFunction = middlewares.every((m) => typeof m === 'function')
+    if (!isAllParamsFunction) {
       throw new Error('Middleware must be a function.')
     }
-    this.stack.push(middleware)
+
+    this.stack.push(...middlewares)
   }
 
   listen(port: string | number): Server {
