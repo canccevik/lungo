@@ -53,7 +53,7 @@ describe('Lungo Class', () => {
       expect(StatusCodes.OK).toEqual(res.statusCode)
     })
 
-    test('should responsw with internal server error when middleware throws error', async () => {
+    test('should response with internal server error when middleware throws error', async () => {
       app.use((req: IRequest, res: IResponse) => {
         throw new Error()
       })
