@@ -1,8 +1,8 @@
 import http, { Server } from 'http'
 import { StatusCodes, getReasonPhrase } from 'http-status-codes'
-import { ILungo, IMiddleware, INextFunc, IRequest, IResponse } from './interfaces'
+import { IMiddleware, INextFunc, IRequest, IResponse } from './interfaces'
 
-export class Lungo implements ILungo {
+export class Lungo {
   stack: IMiddleware[] = []
 
   use(...middlewares: IMiddleware[]): void {
