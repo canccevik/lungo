@@ -1,19 +1,9 @@
 import http, { Server } from 'http'
 import { StatusCodes, getReasonPhrase } from 'http-status-codes'
-import { IMiddleware, INextFunc, IRequest, IResponse } from './interfaces'
+import { INextFunc, IRequest, IResponse } from './interfaces'
+import { Router } from './router'
 
-export class Lungo {
-  stack: IMiddleware[] = []
-
-  use(...middlewares: IMiddleware[]): void {
-    const isAllParamsFunction = middlewares.every((m) => typeof m === 'function')
-    if (!isAllParamsFunction) {
-      throw new Error('Middleware must be a function.')
-    }
-
-    this.stack.push(...middlewares)
-  }
-
+export class Lungo extends Router {
   listen(port: string | number): Server {
     if (!port) {
       throw new Error('Port is not provided.')

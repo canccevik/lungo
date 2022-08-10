@@ -25,22 +25,6 @@ describe('Lungo Class', () => {
     })
   })
 
-  describe('Use Method', () => {
-    test('should throw error if middleware is not a function', () => {
-      const use = () => app.use('test' as never)
-
-      expect(use).toThrow()
-    })
-
-    test('should push the middleware to the stack', () => {
-      const middleware = (req: IRequest, res: IResponse) => []
-
-      app.use(middleware)
-
-      expect(app.stack[0]).toEqual(middleware)
-    })
-  })
-
   describe('Handle Method', () => {
     test('should execute middlewares', async () => {
       app.use((req: IRequest, res: IResponse) => {
