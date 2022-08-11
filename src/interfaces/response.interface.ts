@@ -6,4 +6,6 @@ export interface IResponse extends ServerResponse {
   type(type: string): this
 
   json(body: unknown): void
+
+  send(body: string | object | Buffer | boolean): void
 }

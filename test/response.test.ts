@@ -49,21 +49,55 @@ describe('Response Class', () => {
       server = app.listen(3001)
       const res = await request(server).get('/test')
 
-      expect(res.statusCode).toEqual(500)
+      expect(res.statusCode).toEqual(StatusCodes.INTERNAL_SERVER_ERROR)
     })
   })
 
   describe('json method', () => {
     test('should response with json', async () => {
       const payload = { packageName: 'lungo' }
-      app.post('/test', (req: IRequest, res: IResponse) => {
+      app.get('/test', (req: IRequest, res: IResponse) => {
         res.json(payload)
       })
 
       server = app.listen(3001)
-      const res = await request(server).post('/test')
+      const res = await request(server).get('/test')
 
       expect(res.body).toEqual(payload)
+    })
+  })
+
+  describe('send method', () => {
+    test('should change the content type and send the response', async () => {
+      const html = '<html><body>lungo</body></html>'
+      app.get('/html', (req: IRequest, res: IResponse) => {
+        res.send(html)
+      })
+
+      const payload = { packageName: 'lungo' }
+      app.get('/json', (req: IRequest, res: IResponse) => {
+        res.send(payload)
+      })
+
+      server = app.listen(3001)
+      const htmlRes = await request(server).get('/html')
+      const jsonRes = await request(server).get('/json')
+
+      expect(htmlRes.get('Content-Type')).toEqual('text/html; charset=utf-8')
+      expect(htmlRes.text).toEqual(html)
+      expect(jsonRes.get('Content-Type')).toEqual('application/json; charset=utf-8')
+      expect(jsonRes.body).toEqual(payload)
+    })
+
+    test('should throw error for disallowed type', async () => {
+      app.get('/test', (req: IRequest, res: IResponse) => {
+        res.send(Symbol('symbol') as never)
+      })
+
+      server = app.listen(3001)
+      const res = await request(server).get('/test')
+
+      expect(res.statusCode).toEqual(StatusCodes.INTERNAL_SERVER_ERROR)
     })
   })
 })
