@@ -1,3 +1,5 @@
 export * from './lungo'
 export * from './router'
+export * from './request'
+export * from './response'
 export { IRequest, IResponse, INextFunc } from './interfaces'
