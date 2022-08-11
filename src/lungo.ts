@@ -15,6 +15,8 @@ export class Lungo extends Router {
 
         res.writeHead(StatusCodes.INTERNAL_SERVER_ERROR)
         res.end(err.stack)
+
+        if (process.env.NODE_ENV === 'TEST') return
         console.error(err.stack)
       })
     }

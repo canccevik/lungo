@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tsc",
     "build:dev": "tsc --watch",
-    "test": "jest --verbose --maxWorkers=1",
+    "test": "cross-env NODE_ENV=TEST jest --verbose --maxWorkers=1",
     "lint": "eslint --ext .js,.ts .",
     "lint:fix": "eslint --fix --ext .js,.ts .",
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\""
@@ -20,6 +20,7 @@
     "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^5.30.7",
     "@typescript-eslint/parser": "^5.30.7",
+    "cross-env": "^7.0.3",
     "eslint": "^8.20.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
