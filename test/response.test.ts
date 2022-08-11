@@ -133,4 +133,37 @@ describe('Response Class', () => {
       expect(res.text).toEqual(mimeType)
     })
   })
+
+  describe('set method', () => {
+    test('should set the header by key and value', async () => {
+      app.get('/test', (req: IRequest, res: IResponse) => {
+        res.set('content-type', 'application/json')
+        res.end()
+      })
+
+      server = app.listen(3001)
+      const res = await request(server).get('/test')
+
+      const contentType = res.get('content-type')
+      expect(contentType).toEqual('application/json')
+    })
+
+    test('should set the headers with object', async () => {
+      app.get('/test', (req: IRequest, res: IResponse) => {
+        res.set({
+          'content-type': 'application/json',
+          'x-package-name': 'lungo'
+        })
+        res.end()
+      })
+
+      server = app.listen(3001)
+      const res = await request(server).get('/test')
+      const contentType = res.get('content-type')
+      const packageName = res.get('x-package-name')
+
+      expect(contentType).toEqual('application/json')
+      expect(packageName).toEqual('lungo')
+    })
+  })
 })

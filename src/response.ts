@@ -49,4 +49,18 @@ export class Response extends ServerResponse implements IResponse {
   get(field: string): string | string[] | number | undefined {
     return this.getHeader(field)
   }
+
+  set(object: object): this
+  set(field: string, value: string): this
+  set(fieldOrObject: string | object, value?: string) {
+    if (typeof fieldOrObject === 'string' && value) {
+      this.setHeader(fieldOrObject, value)
+      return this
+    }
+
+    Object.keys(fieldOrObject).forEach((key) => {
+      this.setHeader(key, fieldOrObject[key as keyof typeof fieldOrObject])
+    })
+    return this
+  }
 }

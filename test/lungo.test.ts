@@ -49,7 +49,7 @@ describe('Lungo Class', () => {
     })
   })
 
-  describe('handleRoute Method', () => {
+  describe('handleRoute method', () => {
     test('should handle the route', async () => {
       app.get('/test', (req: IRequest, res: IResponse) => res.end())
 

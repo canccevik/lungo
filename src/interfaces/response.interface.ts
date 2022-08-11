@@ -12,4 +12,7 @@ export interface IResponse extends ServerResponse {
   sendStatus(statusCode: number): void
 
   get(field: string): string | string[] | number | undefined
+
+  set(object: object): this
+  set(field: string, value: string): this
 }
