@@ -1,4 +1,5 @@
 import { ServerResponse } from 'http'
+import { CookieSerializeOptions } from 'cookie'
 
 export interface IResponse extends ServerResponse {
   status(statusCode: number): this
@@ -15,4 +16,6 @@ export interface IResponse extends ServerResponse {
 
   set(object: object): this
   set(field: string, value: string): this
+
+  cookie(name: string, value: string, options?: CookieSerializeOptions): this
 }

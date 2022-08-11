@@ -3,6 +3,7 @@ import { Server } from 'http'
 import { Lungo } from '../src/index'
 import { IRequest, IResponse } from '../src/interfaces'
 import { getReasonPhrase, StatusCodes } from 'http-status-codes'
+import cookie from 'cookie'
 
 describe('Response Class', () => {
   let app: Lungo
@@ -163,6 +164,20 @@ describe('Response Class', () => {
       const packageName = res.get('x-package-name')
 
       expect(contentType).toEqual('application/json')
+      expect(packageName).toEqual('lungo')
+    })
+  })
+
+  describe('cookie method', () => {
+    test('should set the cookie of the header', async () => {
+      app.get('/test', (req: IRequest, res: IResponse) => {
+        res.cookie('package-name', 'lungo').end()
+      })
+
+      server = app.listen(3001)
+      const res = await request(server).get('/test')
+      const packageName = cookie.parse(res.headers['set-cookie'][0])['package-name']
+
       expect(packageName).toEqual('lungo')
     })
   })

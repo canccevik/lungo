@@ -2,6 +2,7 @@ import { ServerResponse } from 'http'
 import { IResponse } from './interfaces'
 import mimeTypes from 'mime-types'
 import { getReasonPhrase } from 'http-status-codes'
+import cookie, { CookieSerializeOptions } from 'cookie'
 
 export class Response extends ServerResponse implements IResponse {
   status(statusCode: number): this {
@@ -61,6 +62,11 @@ export class Response extends ServerResponse implements IResponse {
     Object.keys(fieldOrObject).forEach((key) => {
       this.setHeader(key, fieldOrObject[key as keyof typeof fieldOrObject])
     })
+    return this
+  }
+
+  cookie(name: string, value: string, options?: CookieSerializeOptions): this {
+    this.set('set-cookie', cookie.serialize(name, value, options))
     return this
   }
 }
