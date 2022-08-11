@@ -14,9 +14,7 @@ export class Router extends Route {
         return
       }
 
-      const isAllParamsFunction = (handlers as IMiddleware[]).every((h) => typeof h === 'function')
-
-      if (!isAllParamsFunction) {
+      if (typeof handler !== 'function') {
         throw new Error('Middleware must be a function.')
       }
       this.stack.push(...(handlers as IMiddleware[]))
