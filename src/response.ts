@@ -16,4 +16,9 @@ export class Response extends ServerResponse implements IResponse {
     }
     return this.setHeader('Content-Type', mimeType)
   }
+
+  json(body: unknown) {
+    this.type('application/json')
+    this.end(JSON.stringify(body))
+  }
 }

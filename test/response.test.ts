@@ -52,4 +52,18 @@ describe('Response Class', () => {
       expect(res.statusCode).toEqual(500)
     })
   })
+
+  describe('json method', () => {
+    test('should response with json', async () => {
+      const payload = { packageName: 'lungo' }
+      app.post('/test', (req: IRequest, res: IResponse) => {
+        res.json(payload)
+      })
+
+      server = app.listen(3001)
+      const res = await request(server).post('/test')
+
+      expect(res.body).toEqual(payload)
+    })
+  })
 })
