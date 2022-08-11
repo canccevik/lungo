@@ -1,5 +1,6 @@
 {
   "preset": "ts-jest",
   "testEnvironment": "node",
-  "testPathIgnorePatterns": [".d.ts", ".js"]
+  "testPathIgnorePatterns": [".d.ts", ".js"],
+  "testTimeout": 70000
 }
