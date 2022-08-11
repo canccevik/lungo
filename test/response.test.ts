@@ -2,7 +2,7 @@ import request from 'supertest'
 import { Server } from 'http'
 import { Lungo } from '../src/index'
 import { IRequest, IResponse } from '../src/interfaces'
-import { StatusCodes } from 'http-status-codes'
+import { getReasonPhrase, StatusCodes } from 'http-status-codes'
 
 describe('Response Class', () => {
   let app: Lungo
@@ -98,6 +98,23 @@ describe('Response Class', () => {
       const res = await request(server).get('/test')
 
       expect(res.statusCode).toEqual(StatusCodes.INTERNAL_SERVER_ERROR)
+    })
+  })
+
+  describe('sendStatus method', () => {
+    test('should response with status code reason phrase', async () => {
+      const statusCode = StatusCodes.CREATED
+      const reasonPhrase = getReasonPhrase(statusCode)
+
+      app.get('/test', (req: IRequest, res: IResponse) => {
+        res.sendStatus(statusCode)
+      })
+
+      server = app.listen(3001)
+      const res = await request(server).get('/test')
+
+      expect(res.statusCode).toEqual(statusCode)
+      expect(res.text).toEqual(reasonPhrase)
     })
   })
 })

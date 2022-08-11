@@ -1,6 +1,7 @@
 import { ServerResponse } from 'http'
 import { IResponse } from './interfaces'
 import mimeTypes from 'mime-types'
+import { getReasonPhrase } from 'http-status-codes'
 
 export class Response extends ServerResponse implements IResponse {
   status(statusCode: number): this {
@@ -35,5 +36,13 @@ export class Response extends ServerResponse implements IResponse {
 
     const response = typeof body === 'string' ? body : JSON.stringify(body)
     this.end(response)
+  }
+
+  sendStatus(statusCode: number) {
+    const reasonPhrase = getReasonPhrase(statusCode)
+
+    this.type('text/plain')
+    this.status(statusCode)
+    this.end(reasonPhrase)
   }
 }

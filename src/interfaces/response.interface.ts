@@ -8,4 +8,6 @@ export interface IResponse extends ServerResponse {
   json(body: unknown): void
 
   send(body: string | object | Buffer | boolean): void
+
+  sendStatus(statusCode: number): void
 }
