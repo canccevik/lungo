@@ -1,5 +1,5 @@
 import http, { Server } from 'http'
-import { StatusCodes, getReasonPhrase } from 'http-status-codes'
+import { StatusCodes } from 'http-status-codes'
 import { INextFunc, IRequest, IResponse } from './interfaces'
 import { Router } from './router'
 
@@ -14,7 +14,8 @@ export class Lungo extends Router {
         if (!err) return
 
         res.writeHead(StatusCodes.INTERNAL_SERVER_ERROR)
-        res.end(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR))
+        res.end(err.stack)
+        console.error(err.stack)
       })
     }
     return http.createServer(handler).listen(port)
