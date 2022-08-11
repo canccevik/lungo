@@ -1,6 +1,8 @@
-import http, { Server } from 'http'
+import http, { IncomingMessage, Server, ServerResponse } from 'http'
 import { StatusCodes } from 'http-status-codes'
 import { INextFunc, IRequest, IResponse } from './interfaces'
+import { Request } from './request'
+import { Response } from './response'
 import { Router } from './router'
 
 export class Lungo extends Router {
@@ -9,8 +11,8 @@ export class Lungo extends Router {
       throw new Error('Port is not provided.')
     }
 
-    const handler = (req: IRequest, res: IResponse) => {
-      this.handle(req, res, (err: Error) => {
+    const handler = (req: IncomingMessage, res: ServerResponse) => {
+      this.handle(req as IRequest, res as IResponse, (err: Error) => {
         if (!err) return
 
         res.writeHead(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -20,7 +22,10 @@ export class Lungo extends Router {
         console.error(err.stack)
       })
     }
-    return http.createServer(handler).listen(port)
+
+    return http
+      .createServer({ IncomingMessage: Request, ServerResponse: Response }, handler)
+      .listen(port)
   }
 
   handle(req: IRequest, res: IResponse, callback: Function) {
