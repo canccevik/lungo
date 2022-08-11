@@ -20,24 +20,41 @@ export class Lungo extends Router {
     return http.createServer(handler).listen(port)
   }
 
-  handle(req: IRequest, res: IResponse, callback: Function): void {
+  handle(req: IRequest, res: IResponse, callback: Function) {
     let index = 0
 
     const next: INextFunc = (error?: unknown) => {
       if (error) {
         return callback(error)
-      } else if (index >= this.stack.length) {
-        return callback()
+      }
+      if (index >= this.stack.length) {
+        return this.handleRoute(req, res, next, callback)
       }
 
-      const layer = this.stack[index++]
+      const middleware = this.stack[index++]
 
       try {
-        layer(req, res, next)
+        middleware(req, res, next)
       } catch (err: unknown) {
         next(err)
       }
     }
     next()
+  }
+
+  private handleRoute(req: IRequest, res: IResponse, next: INextFunc, callback: Function) {
+    const route = this.routes.find((route) => route.method === req.method && route.path === req.url)
+
+    if (!route) {
+      res.writeHead(StatusCodes.NOT_FOUND)
+      res.end(`Cannot ${req.method} ${req.url}`)
+      return
+    }
+
+    try {
+      route.handler(req, res, next)
+    } catch (err) {
+      callback(err)
+    }
   }
 }

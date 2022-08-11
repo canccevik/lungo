@@ -26,13 +26,23 @@ describe('Router Class', () => {
       expect(app.stack[0]).toEqual(middleware)
     })
 
-    test('should push the router to the stack', () => {
+    test('should push the router stack to the stack', () => {
       const middleware = (req: IRequest, res: IResponse) => []
 
       router.use(middleware)
       app.use(router)
 
-      expect(app.stack[0]).toEqual(router.stack[0])
+      expect(router.stack[0]).toEqual(app.stack[0])
+    })
+
+    test('should push the route to the routes', () => {
+      const path = '/test'
+      const handler = (req: IRequest, res: IResponse) => []
+
+      router.get(path, handler)
+      app.use(router)
+
+      expect(router.routes[0]).toEqual({ handler, path, method: 'GET' })
     })
   })
 })

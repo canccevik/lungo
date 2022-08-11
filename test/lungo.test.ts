@@ -34,7 +34,7 @@ describe('Lungo Class', () => {
       server = app.listen(3001)
       const res = await request(server).get('/')
 
-      expect(StatusCodes.OK).toEqual(res.statusCode)
+      expect(res.statusCode).toEqual(StatusCodes.OK)
     })
 
     test('should response with internal server error when middleware throws error', async () => {
@@ -45,7 +45,29 @@ describe('Lungo Class', () => {
       server = app.listen(3001)
       const res = await request(server).get('/')
 
-      expect(StatusCodes.INTERNAL_SERVER_ERROR).toEqual(res.statusCode)
+      expect(res.statusCode).toEqual(StatusCodes.INTERNAL_SERVER_ERROR)
+    })
+  })
+
+  describe('Handle Route Method', () => {
+    test('should handle the route', async () => {
+      app.get('/test', (req: IRequest, res: IResponse) => res.end())
+
+      server = app.listen(3001)
+      const res = await request(server).get('/test')
+
+      expect(res.statusCode).toEqual(StatusCodes.OK)
+    })
+
+    test('should response with internal server error when route throws error', async () => {
+      app.get('/test', (req: IRequest, res: IResponse) => {
+        throw new Error()
+      })
+
+      server = app.listen(3001)
+      const res = await request(server).get('/test')
+
+      expect(res.statusCode).toEqual(StatusCodes.INTERNAL_SERVER_ERROR)
     })
   })
 })
