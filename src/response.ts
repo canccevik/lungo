@@ -8,7 +8,8 @@ export class Response extends ServerResponse implements IResponse {
   }
 
   type(type: string): this {
-    const mimeType = mimeTypes.lookup(type)
+    const mimeType =
+      mimeTypes.lookup(type) === false ? mimeTypes.contentType(type) : mimeTypes.lookup(type)
 
     if (!mimeType) {
       throw new Error('Mime type is not valid.')
