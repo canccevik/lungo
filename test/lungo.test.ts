@@ -17,7 +17,7 @@ describe('Lungo Class', () => {
     server.close()
   })
 
-  describe('Listen Method', () => {
+  describe('listen method', () => {
     test('should create and return the server', () => {
       server = app.listen(3001)
 
@@ -25,7 +25,7 @@ describe('Lungo Class', () => {
     })
   })
 
-  describe('Handle Method', () => {
+  describe('handle method', () => {
     test('should execute middlewares', async () => {
       app.use((req: IRequest, res: IResponse) => {
         res.end()
@@ -49,7 +49,7 @@ describe('Lungo Class', () => {
     })
   })
 
-  describe('Handle Route Method', () => {
+  describe('handleRoute Method', () => {
     test('should handle the route', async () => {
       app.get('/test', (req: IRequest, res: IResponse) => res.end())
 

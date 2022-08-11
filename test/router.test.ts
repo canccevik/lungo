@@ -11,7 +11,7 @@ describe('Router Class', () => {
     router = new Router()
   })
 
-  describe('Use Method', () => {
+  describe('use method', () => {
     test('should throw error if middleware is not a function', () => {
       const use = () => app.use('test' as never)
 
