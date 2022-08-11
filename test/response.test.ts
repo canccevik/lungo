@@ -117,4 +117,20 @@ describe('Response Class', () => {
       expect(res.text).toEqual(reasonPhrase)
     })
   })
+
+  describe('get method', () => {
+    test('should get the value of header', async () => {
+      const mimeType = 'application/json; charset=utf-8'
+      app.get('/test', (req: IRequest, res: IResponse) => {
+        res.type(mimeType)
+        const contentType = res.get('content-type')
+        res.send(contentType as string)
+      })
+
+      server = app.listen(3001)
+      const res = await request(server).get('/test')
+
+      expect(res.text).toEqual(mimeType)
+    })
+  })
 })

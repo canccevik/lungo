@@ -10,4 +10,6 @@ export interface IResponse extends ServerResponse {
   send(body: string | object | Buffer | boolean): void
 
   sendStatus(statusCode: number): void
+
+  get(field: string): string | string[] | number | undefined
 }

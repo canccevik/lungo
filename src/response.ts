@@ -45,4 +45,8 @@ export class Response extends ServerResponse implements IResponse {
     this.status(statusCode)
     this.end(reasonPhrase)
   }
+
+  get(field: string): string | string[] | number | undefined {
+    return this.getHeader(field)
+  }
 }
