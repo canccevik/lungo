@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Lungo } from '../src/index'
+import { Lungo, Router } from '../src/index'
 import { IRequest, IResponse } from '../src/interfaces'
 
 describe('Router Class', () => {
   let app: Lungo
+  let router: Router
 
   beforeEach(() => {
     app = new Lungo()
+    router = new Router()
   })
 
   describe('Use Method', () => {
@@ -22,6 +24,15 @@ describe('Router Class', () => {
       app.use(middleware)
 
       expect(app.stack[0]).toEqual(middleware)
+    })
+
+    test('should push the router to the stack', () => {
+      const middleware = (req: IRequest, res: IResponse) => []
+
+      router.use(middleware)
+      app.use(router)
+
+      expect(app.stack[0]).toEqual(router.stack[0])
     })
   })
 })
