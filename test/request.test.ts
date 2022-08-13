@@ -27,4 +27,18 @@ describe('Response Class', () => {
       expect(res.text).toEqual('lungo')
     })
   })
+
+  describe('ip property', () => {
+    test('should be defined', async () => {
+      app.get('/test', (req: Request, res: Response) => {
+        const ipAddress = req.ip
+        res.end(ipAddress)
+      })
+
+      server = app.listen(3001)
+      const res = await request(server).get('/test')
+
+      expect(res.text).toEqual('127.0.0.1')
+    })
+  })
 })
