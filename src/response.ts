@@ -5,7 +5,8 @@ import cookie, { CookieSerializeOptions } from 'cookie'
 
 export class Response extends ServerResponse {
   public status(statusCode: number): this {
-    return this.writeHead(statusCode)
+    this.statusCode = statusCode
+    return this
   }
 
   public type(type: string): this {
