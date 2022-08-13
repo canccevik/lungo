@@ -13,13 +13,13 @@ describe('Router Class', () => {
 
   describe('use method', () => {
     test('should throw error if middleware is not a function', () => {
-      const use = () => app.use('test' as never)
+      const use = (): void => app.use('test' as never)
 
       expect(use).toThrow()
     })
 
     test('should push the middleware to the stack', () => {
-      const middleware = (req: IRequest, res: IResponse) => []
+      const middleware = (req: IRequest, res: IResponse): [] => []
 
       app.use(middleware)
 
@@ -27,7 +27,7 @@ describe('Router Class', () => {
     })
 
     test('should push the router stack to the stack', () => {
-      const middleware = (req: IRequest, res: IResponse) => []
+      const middleware = (req: IRequest, res: IResponse): [] => []
 
       router.use(middleware)
       app.use(router)
@@ -37,7 +37,7 @@ describe('Router Class', () => {
 
     test('should push the route to the routes', () => {
       const path = '/test'
-      const handler = (req: IRequest, res: IResponse) => []
+      const handler = (req: IRequest, res: IResponse): [] => []
 
       router.get(path, handler)
       app.use(router)
