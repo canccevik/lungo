@@ -1,10 +1,9 @@
 import { ServerResponse } from 'http'
-import { IResponse } from './interfaces'
 import mimeTypes from 'mime-types'
 import { getReasonPhrase } from 'http-status-codes'
 import cookie, { CookieSerializeOptions } from 'cookie'
 
-export class Response extends ServerResponse implements IResponse {
+export class Response extends ServerResponse {
   public status(statusCode: number): this {
     return this.writeHead(statusCode)
   }

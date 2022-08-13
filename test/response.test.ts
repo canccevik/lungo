@@ -1,7 +1,6 @@
 import request from 'supertest'
 import { Server } from 'http'
-import { Lungo } from '../src/index'
-import { IRequest, IResponse } from '../src/interfaces'
+import { Lungo, Request, Response } from '../src/index'
 import { getReasonPhrase, StatusCodes } from 'http-status-codes'
 import cookie from 'cookie'
 
@@ -19,7 +18,7 @@ describe('Response Class', () => {
 
   describe('status method', () => {
     test('should set the status code', async () => {
-      app.post('/test', (req: IRequest, res: IResponse) => {
+      app.post('/test', (req: Request, res: Response) => {
         res.status(201).end()
       })
 
@@ -32,7 +31,7 @@ describe('Response Class', () => {
 
   describe('type method', () => {
     test('should set the type of header', async () => {
-      app.get('/test', (req: IRequest, res: IResponse) => {
+      app.get('/test', (req: Request, res: Response) => {
         res.type('json').end()
       })
 
@@ -43,7 +42,7 @@ describe('Response Class', () => {
     })
 
     test('should throw error for unknown mime type', async () => {
-      app.get('/test', (req: IRequest, res: IResponse) => {
+      app.get('/test', (req: Request, res: Response) => {
         res.type('unknown-type').end()
       })
 
@@ -57,7 +56,7 @@ describe('Response Class', () => {
   describe('json method', () => {
     test('should response with json', async () => {
       const payload = { packageName: 'lungo' }
-      app.get('/test', (req: IRequest, res: IResponse) => {
+      app.get('/test', (req: Request, res: Response) => {
         res.json(payload)
       })
 
@@ -71,12 +70,12 @@ describe('Response Class', () => {
   describe('send method', () => {
     test('should change the content type and send the response', async () => {
       const html = '<html><body>lungo</body></html>'
-      app.get('/html', (req: IRequest, res: IResponse) => {
+      app.get('/html', (req: Request, res: Response) => {
         res.send(html)
       })
 
       const payload = { packageName: 'lungo' }
-      app.get('/json', (req: IRequest, res: IResponse) => {
+      app.get('/json', (req: Request, res: Response) => {
         res.send(payload)
       })
 
@@ -91,7 +90,7 @@ describe('Response Class', () => {
     })
 
     test('should throw error for disallowed type', async () => {
-      app.get('/test', (req: IRequest, res: IResponse) => {
+      app.get('/test', (req: Request, res: Response) => {
         res.send(Symbol('symbol') as never)
       })
 
@@ -107,7 +106,7 @@ describe('Response Class', () => {
       const statusCode = StatusCodes.CREATED
       const reasonPhrase = getReasonPhrase(statusCode)
 
-      app.get('/test', (req: IRequest, res: IResponse) => {
+      app.get('/test', (req: Request, res: Response) => {
         res.sendStatus(statusCode)
       })
 
@@ -122,7 +121,7 @@ describe('Response Class', () => {
   describe('get method', () => {
     test('should get the value of header', async () => {
       const mimeType = 'application/json; charset=utf-8'
-      app.get('/test', (req: IRequest, res: IResponse) => {
+      app.get('/test', (req: Request, res: Response) => {
         res.type(mimeType)
         const contentType = res.get('content-type')
         res.send(contentType as string)
@@ -137,7 +136,7 @@ describe('Response Class', () => {
 
   describe('set method', () => {
     test('should set the header by key and value', async () => {
-      app.get('/test', (req: IRequest, res: IResponse) => {
+      app.get('/test', (req: Request, res: Response) => {
         res.set('content-type', 'application/json')
         res.end()
       })
@@ -150,7 +149,7 @@ describe('Response Class', () => {
     })
 
     test('should set the headers with object', async () => {
-      app.get('/test', (req: IRequest, res: IResponse) => {
+      app.get('/test', (req: Request, res: Response) => {
         res.set({
           'content-type': 'application/json',
           'x-package-name': 'lungo'
@@ -170,7 +169,7 @@ describe('Response Class', () => {
 
   describe('cookie method', () => {
     test('should set the cookie of the header', async () => {
-      app.get('/test', (req: IRequest, res: IResponse) => {
+      app.get('/test', (req: Request, res: Response) => {
         res.cookie('package-name', 'lungo').end()
       })
 

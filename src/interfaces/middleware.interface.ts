@@ -1,5 +1,7 @@
-import { IRequest, IResponse, INextFunc } from './index'
+import { Request } from '../request'
+import { Response } from '../response'
+import { INextFunc } from './index'
 
 export interface IMiddleware {
-  (req: IRequest, res: IResponse, next: INextFunc): void
+  (req: Request, res: Response, next: INextFunc): void
 }

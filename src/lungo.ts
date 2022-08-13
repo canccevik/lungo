@@ -1,6 +1,6 @@
 import http, { IncomingMessage, Server, ServerResponse } from 'http'
 import { StatusCodes } from 'http-status-codes'
-import { INextFunc, IRequest, IResponse } from './interfaces'
+import { INextFunc } from './interfaces'
 import { Request } from './request'
 import { Response } from './response'
 import { Router } from './router'
@@ -12,7 +12,7 @@ export class Lungo extends Router {
     }
 
     const handler = (req: IncomingMessage, res: ServerResponse): void => {
-      this.handle(req as IRequest, res as IResponse, (err: Error) => {
+      this.handle(req as Request, res as Response, (err: Error) => {
         if (!err) return
 
         res.writeHead(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -28,7 +28,7 @@ export class Lungo extends Router {
       .listen(port)
   }
 
-  public handle(req: IRequest, res: IResponse, callback: Function): void {
+  public handle(req: Request, res: Response, callback: Function): void {
     let index = 0
 
     const next: INextFunc = (error?: unknown) => {
@@ -50,7 +50,7 @@ export class Lungo extends Router {
     next()
   }
 
-  private handleRoute(req: IRequest, res: IResponse, next: INextFunc, callback: Function): void {
+  private handleRoute(req: Request, res: Response, next: INextFunc, callback: Function): void {
     const route = this.routes.find((route) => route.method === req.method && route.path === req.url)
 
     if (!route) {

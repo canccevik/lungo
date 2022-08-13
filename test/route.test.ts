@@ -1,7 +1,6 @@
 import request from 'supertest'
 import { Server } from 'http'
-import { Lungo, Router } from '../src/index'
-import { IRequest, IResponse } from '../src/interfaces'
+import { Lungo, Request, Response, Router } from '../src/index'
 import { StatusCodes } from 'http-status-codes'
 
 describe('Route Class', () => {
@@ -19,7 +18,7 @@ describe('Route Class', () => {
   })
 
   test('should execute the "get" route handler', async () => {
-    router.get('/test', (req: IRequest, res: IResponse) => {
+    router.get('/test', (req: Request, res: Response) => {
       res.writeHead(StatusCodes.OK)
       res.end()
     })
@@ -32,7 +31,7 @@ describe('Route Class', () => {
   })
 
   test('should execute the "post" route handler', async () => {
-    router.post('/test', (req: IRequest, res: IResponse) => {
+    router.post('/test', (req: Request, res: Response) => {
       res.writeHead(StatusCodes.CREATED)
       res.end()
     })
@@ -45,7 +44,7 @@ describe('Route Class', () => {
   })
 
   test('should execute the "put" route handler', async () => {
-    router.put('/test', (req: IRequest, res: IResponse) => {
+    router.put('/test', (req: Request, res: Response) => {
       res.writeHead(StatusCodes.NO_CONTENT)
       res.end()
     })
@@ -58,7 +57,7 @@ describe('Route Class', () => {
   })
 
   test('should execute the "delete" route handler', async () => {
-    router.delete('/test', (req: IRequest, res: IResponse) => {
+    router.delete('/test', (req: Request, res: Response) => {
       res.writeHead(StatusCodes.NO_CONTENT)
       res.end()
     })
@@ -71,7 +70,7 @@ describe('Route Class', () => {
   })
 
   test('should execute the "patch" route handler', async () => {
-    router.patch('/test', (req: IRequest, res: IResponse) => {
+    router.patch('/test', (req: Request, res: Response) => {
       res.writeHead(StatusCodes.NO_CONTENT)
       res.end()
     })

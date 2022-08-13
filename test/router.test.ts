@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Lungo, Router } from '../src/index'
-import { IRequest, IResponse } from '../src/interfaces'
+import { Lungo, Request, Response, Router } from '../src/index'
 
 describe('Router Class', () => {
   let app: Lungo
@@ -19,7 +18,7 @@ describe('Router Class', () => {
     })
 
     test('should push the middleware to the stack', () => {
-      const middleware = (req: IRequest, res: IResponse): [] => []
+      const middleware = (req: Request, res: Response): [] => []
 
       app.use(middleware)
 
@@ -27,7 +26,7 @@ describe('Router Class', () => {
     })
 
     test('should push the router stack to the stack', () => {
-      const middleware = (req: IRequest, res: IResponse): [] => []
+      const middleware = (req: Request, res: Response): [] => []
 
       router.use(middleware)
       app.use(router)
@@ -37,7 +36,7 @@ describe('Router Class', () => {
 
     test('should push the route to the routes', () => {
       const path = '/test'
-      const handler = (req: IRequest, res: IResponse): [] => []
+      const handler = (req: Request, res: Response): [] => []
 
       router.get(path, handler)
       app.use(router)
