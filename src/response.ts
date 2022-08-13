@@ -5,11 +5,11 @@ import { getReasonPhrase } from 'http-status-codes'
 import cookie, { CookieSerializeOptions } from 'cookie'
 
 export class Response extends ServerResponse implements IResponse {
-  status(statusCode: number): this {
+  public status(statusCode: number): this {
     return this.writeHead(statusCode)
   }
 
-  type(type: string): this {
+  public type(type: string): this {
     const mimeType =
       mimeTypes.lookup(type) === false ? mimeTypes.contentType(type) : mimeTypes.lookup(type)
 
@@ -19,12 +19,12 @@ export class Response extends ServerResponse implements IResponse {
     return this.setHeader('Content-Type', mimeType)
   }
 
-  json(body: unknown) {
+  public json(body: unknown): void {
     this.type('application/json')
     this.end(JSON.stringify(body))
   }
 
-  send(body: string | object | Buffer | boolean) {
+  public send(body: string | object | Buffer | boolean): void {
     if (typeof body === 'string') {
       this.type('text/html')
     } else if (typeof body === 'object' || typeof body === 'boolean') {
@@ -39,7 +39,7 @@ export class Response extends ServerResponse implements IResponse {
     this.end(response)
   }
 
-  sendStatus(statusCode: number) {
+  public sendStatus(statusCode: number): void {
     const reasonPhrase = getReasonPhrase(statusCode)
 
     this.type('text/plain')
@@ -47,13 +47,13 @@ export class Response extends ServerResponse implements IResponse {
     this.end(reasonPhrase)
   }
 
-  get(field: string): string | string[] | number | undefined {
+  public get(field: string): string | string[] | number | undefined {
     return this.getHeader(field)
   }
 
-  set(object: object): this
-  set(field: string, value: string): this
-  set(fieldOrObject: string | object, value?: string) {
+  public set(object: object): this
+  public set(field: string, value: string): this
+  public set(fieldOrObject: string | object, value?: string): this {
     if (typeof fieldOrObject === 'string' && value) {
       this.setHeader(fieldOrObject, value)
       return this
@@ -65,7 +65,7 @@ export class Response extends ServerResponse implements IResponse {
     return this
   }
 
-  cookie(name: string, value: string, options?: CookieSerializeOptions): this {
+  public cookie(name: string, value: string, options?: CookieSerializeOptions): this {
     this.set('set-cookie', cookie.serialize(name, value, options))
     return this
   }

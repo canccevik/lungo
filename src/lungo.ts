@@ -6,12 +6,12 @@ import { Response } from './response'
 import { Router } from './router'
 
 export class Lungo extends Router {
-  listen(port: string | number): Server {
+  public listen(port: string | number): Server {
     if (!port) {
       throw new Error('Port is not provided.')
     }
 
-    const handler = (req: IncomingMessage, res: ServerResponse) => {
+    const handler = (req: IncomingMessage, res: ServerResponse): void => {
       this.handle(req as IRequest, res as IResponse, (err: Error) => {
         if (!err) return
 
@@ -28,7 +28,7 @@ export class Lungo extends Router {
       .listen(port)
   }
 
-  handle(req: IRequest, res: IResponse, callback: Function) {
+  public handle(req: IRequest, res: IResponse, callback: Function): void {
     let index = 0
 
     const next: INextFunc = (error?: unknown) => {
@@ -50,7 +50,7 @@ export class Lungo extends Router {
     next()
   }
 
-  private handleRoute(req: IRequest, res: IResponse, next: INextFunc, callback: Function) {
+  private handleRoute(req: IRequest, res: IResponse, next: INextFunc, callback: Function): void {
     const route = this.routes.find((route) => route.method === req.method && route.path === req.url)
 
     if (!route) {

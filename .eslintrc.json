@@ -17,6 +17,17 @@
   "rules": {
     "prettier/prettier": ["error", { "endOfLine": "auto" }],
     "@typescript-eslint/ban-types": "off",
-    "@typescript-eslint/no-empty-interface": "off"
-  }
+    "@typescript-eslint/no-empty-interface": "off",
+    "@typescript-eslint/explicit-member-accessibility": "off",
+    "@typescript-eslint/explicit-function-return-type": "off"
+  },
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "rules": {
+        "@typescript-eslint/explicit-member-accessibility": ["error"],
+        "@typescript-eslint/explicit-function-return-type": ["error"]
+      }
+    }
+  ]
 }

@@ -2,11 +2,11 @@ import { IMiddleware } from './interfaces'
 import { Route } from './route'
 
 export class Router extends Route {
-  stack: IMiddleware[] = []
+  public stack: IMiddleware[] = []
 
-  use(...routers: Router[]): void
-  use(...middlewares: IMiddleware[]): void
-  use(...handlers: IMiddleware[] | Router[]) {
+  public use(...routers: Router[]): void
+  public use(...middlewares: IMiddleware[]): void
+  public use(...handlers: IMiddleware[] | Router[]): void {
     handlers.forEach((handler) => {
       if (handler instanceof Router) {
         this.stack.push(...handler.stack)
