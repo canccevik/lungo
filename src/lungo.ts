@@ -39,10 +39,10 @@ export class Lungo extends Router {
         return this.handleRoute(req, res, next, callback)
       }
 
-      const middleware = this.stack[index++]
+      const handler = this.stack[index++]
 
       try {
-        middleware(req, res, next)
+        handler(req, res, next)
       } catch (err: unknown) {
         next(err)
       }

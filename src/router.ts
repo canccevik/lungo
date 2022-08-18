@@ -1,12 +1,12 @@
-import { IMiddleware } from './interfaces'
+import { IHandler } from './interfaces'
 import { Route } from './route'
 
 export class Router extends Route {
-  public stack: IMiddleware[] = []
+  public stack: IHandler[] = []
 
   public use(...routers: Router[]): void
-  public use(...middlewares: IMiddleware[]): void
-  public use(...handlers: IMiddleware[] | Router[]): void {
+  public use(...handlers: IHandler[]): void
+  public use(...handlers: IHandler[] | Router[]): void {
     handlers.forEach((handler) => {
       if (handler instanceof Router) {
         this.stack.push(...handler.stack)
@@ -15,9 +15,9 @@ export class Router extends Route {
       }
 
       if (typeof handler !== 'function') {
-        throw new Error('Middleware must be a function.')
+        throw new Error('Handler must be a function.')
       }
-      this.stack.push(...(handlers as IMiddleware[]))
+      this.stack.push(...(handlers as IHandler[]))
     })
   }
 }

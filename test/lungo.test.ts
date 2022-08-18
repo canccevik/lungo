@@ -25,7 +25,7 @@ describe('Lungo Class', () => {
   })
 
   describe('handle method', () => {
-    test('should execute middlewares', async () => {
+    test('should execute handlers', async () => {
       app.use((req: Request, res: Response) => {
         res.end()
       })
@@ -36,7 +36,7 @@ describe('Lungo Class', () => {
       expect(res.statusCode).toEqual(StatusCodes.OK)
     })
 
-    test('should response with internal server error when middleware throws error', async () => {
+    test('should response with internal server error when handler throws error', async () => {
       app.use((req: Request, res: Response) => {
         throw new Error()
       })

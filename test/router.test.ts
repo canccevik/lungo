@@ -11,24 +11,24 @@ describe('Router Class', () => {
   })
 
   describe('use method', () => {
-    test('should throw error if middleware is not a function', () => {
+    test('should throw error if handler is not a function', () => {
       const use = (): void => app.use('test' as never)
 
       expect(use).toThrow()
     })
 
-    test('should push the middleware to the stack', () => {
-      const middleware = (req: Request, res: Response): [] => []
+    test('should push the handler to the stack', () => {
+      const handler = (req: Request, res: Response): [] => []
 
-      app.use(middleware)
+      app.use(handler)
 
-      expect(app.stack[0]).toEqual(middleware)
+      expect(app.stack[0]).toEqual(handler)
     })
 
     test('should push the router stack to the stack', () => {
-      const middleware = (req: Request, res: Response): [] => []
+      const handler = (req: Request, res: Response): [] => []
 
-      router.use(middleware)
+      router.use(handler)
       app.use(router)
 
       expect(router.stack[0]).toEqual(app.stack[0])
