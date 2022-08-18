@@ -2,22 +2,25 @@ import { IHandler } from './interfaces'
 import { Route } from './route'
 
 export class Router extends Route {
-  public stack: IHandler[] = []
+  public use(handler: IHandler): void
+  public use(path: string, handler: IHandler): void
+  public use(path: string, router: Router): void
+  public use(pathOrHandler: string | IHandler, routerOrHandler?: Router | IHandler): void {
+    if (typeof pathOrHandler === 'function') {
+      this.stack.push({ path: '/', method: null, handler: pathOrHandler })
+      return
+    }
+    if (typeof routerOrHandler === 'function') {
+      this.stack.push({ path: pathOrHandler, method: 'GET', handler: routerOrHandler })
+      return
+    }
 
-  public use(...routers: Router[]): void
-  public use(...handlers: IHandler[]): void
-  public use(...handlers: IHandler[] | Router[]): void {
-    handlers.forEach((handler) => {
-      if (handler instanceof Router) {
-        this.stack.push(...handler.stack)
-        this.routes.push(...handler.routes)
-        return
-      }
-
-      if (typeof handler !== 'function') {
-        throw new Error('Handler must be a function.')
-      }
-      this.stack.push(...(handlers as IHandler[]))
+    const router = routerOrHandler as Router
+    const modifiedRoutes = router.stack.map((route) => {
+      const path = `${pathOrHandler}/${route.path}`
+      route.path = path.replace(/\/+/g, '/').replace(/\/+$/, '')
+      return route
     })
+    this.stack.push(...modifiedRoutes)
   }
 }

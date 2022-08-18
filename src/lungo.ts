@@ -31,15 +31,19 @@ export class Lungo extends Router {
   public handle(req: Request, res: Response, callback: Function): void {
     let index = 0
 
+    const midllewareRoutes = this.stack.filter(
+      (route) => !route.method && (route.path === '/' || route.path === req.url)
+    )
+
     const next: INextFunc = (error?: unknown) => {
       if (error) {
         return callback(error)
       }
-      if (index >= this.stack.length) {
+      if (index >= midllewareRoutes.length) {
         return this.handleRoute(req, res, next, callback)
       }
 
-      const handler = this.stack[index++]
+      const handler = midllewareRoutes[index++].handler
 
       try {
         handler(req, res, next)
@@ -51,7 +55,7 @@ export class Lungo extends Router {
   }
 
   private handleRoute(req: Request, res: Response, next: INextFunc, callback: Function): void {
-    const route = this.routes.find((route) => route.method === req.method && route.path === req.url)
+    const route = this.stack.find((route) => route.method === req.method && route.path === req.url)
 
     if (!route) {
       res.writeHead(StatusCodes.NOT_FOUND)
