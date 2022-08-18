@@ -23,7 +23,7 @@ describe('Route Class', () => {
       res.end()
     })
 
-    app.use(router)
+    app.use('/', router)
     server = app.listen(3001)
     const res = await request(server).get('/test')
 
@@ -36,7 +36,7 @@ describe('Route Class', () => {
       res.end()
     })
 
-    app.use(router)
+    app.use('/', router)
     server = app.listen(3001)
     const res = await request(server).post('/test')
 
@@ -49,7 +49,7 @@ describe('Route Class', () => {
       res.end()
     })
 
-    app.use(router)
+    app.use('/', router)
     server = app.listen(3001)
     const res = await request(server).put('/test')
 
@@ -62,7 +62,7 @@ describe('Route Class', () => {
       res.end()
     })
 
-    app.use(router)
+    app.use('/', router)
     server = app.listen(3001)
     const res = await request(server).delete('/test')
 
@@ -75,7 +75,7 @@ describe('Route Class', () => {
       res.end()
     })
 
-    app.use(router)
+    app.use('/', router)
     server = app.listen(3001)
     const res = await request(server).patch('/test')
 

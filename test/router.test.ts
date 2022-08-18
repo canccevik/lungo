@@ -1,47 +1,66 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Lungo, Request, Response, Router } from '../src/index'
+import request from 'supertest'
+import { Server } from 'http'
+import { StatusCodes } from 'http-status-codes'
 
 describe('Router Class', () => {
   let app: Lungo
   let router: Router
+  let server: Server
 
   beforeEach(() => {
     app = new Lungo()
     router = new Router()
   })
 
+  afterEach(() => {
+    server.close()
+  })
+
   describe('use method', () => {
-    test('should throw error if handler is not a function', () => {
-      const use = (): void => app.use('test' as never)
-
-      expect(use).toThrow()
-    })
-
-    test('should push the handler to the stack', () => {
-      const handler = (req: Request, res: Response): [] => []
-
-      app.use(handler)
-
-      expect(app.stack[0]).toEqual(handler)
-    })
-
-    test('should push the router stack to the stack', () => {
-      const handler = (req: Request, res: Response): [] => []
-
+    test('should push the handler to the stack', async () => {
+      const handler = (req: Request, res: Response): void => {
+        res.status(201).end()
+      }
       router.use(handler)
-      app.use(router)
 
-      expect(router.stack[0]).toEqual(app.stack[0])
+      app.use('/', router)
+      server = app.listen(3001)
+      const res = await request(server).get('/')
+
+      expect(app.stack[0]).toEqual({ path: '/', method: null, handler })
+      expect(res.statusCode).toEqual(StatusCodes.CREATED)
     })
 
-    test('should push the route to the routes', () => {
-      const path = '/test'
-      const handler = (req: Request, res: Response): [] => []
+    test('should handle as a get route when path is given', async () => {
+      const handler = (req: Request, res: Response): void => {
+        res.status(201).end()
+      }
+      router.use('/test', handler)
 
-      router.get(path, handler)
-      app.use(router)
+      app.use('/', router)
+      server = app.listen(3001)
+      const res = await request(server).get('/test')
 
-      expect(router.routes[0]).toEqual({ handler, path, method: 'GET' })
+      expect(app.stack[0]).toEqual({ path: '/test', method: 'GET', handler })
+      expect(res.statusCode).toEqual(StatusCodes.CREATED)
+    })
+
+    test('should serialize all of the routers', async () => {
+      const userRouter = new Router()
+      const handler = (req: Request, res: Response): void => {
+        res.end()
+      }
+      userRouter.get('/users', handler)
+      router.use('/v1', userRouter)
+
+      app.use('/', router)
+      server = app.listen(3001)
+      const res = await request(server).get('/v1/users')
+
+      expect(app.stack[0]).toEqual({ path: '/v1/users', method: 'GET', handler })
+      expect(res.statusCode).toEqual(StatusCodes.OK)
     })
   })
 })
