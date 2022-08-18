@@ -1,26 +1,21 @@
 import http, { IncomingMessage, Server, ServerResponse } from 'http'
 import { StatusCodes } from 'http-status-codes'
+import { EventEmitter } from 'stream'
 import { INextFunc } from './interfaces'
 import { Request } from './request'
 import { Response } from './response'
 import { Router } from './router'
 
 export class Lungo extends Router {
+  private eventEmitter = new EventEmitter()
+
   public listen(port: string | number): Server {
     if (!port) {
       throw new Error('Port is not provided.')
     }
 
     const handler = (req: IncomingMessage, res: ServerResponse): void => {
-      this.handle(req as Request, res as Response, (err: Error) => {
-        if (!err) return
-
-        res.writeHead(StatusCodes.INTERNAL_SERVER_ERROR)
-        res.end(err.stack)
-
-        if (process.env.NODE_ENV === 'TEST') return
-        console.error(err.stack)
-      })
+      this.handleRequest(req as Request, res as Response)
     }
 
     return http
@@ -28,7 +23,7 @@ export class Lungo extends Router {
       .listen(port)
   }
 
-  public handle(req: Request, res: Response, callback: Function): void {
+  public handleRequest(req: Request, res: Response): void {
     let index = 0
 
     const midllewareRoutes = this.stack.filter(
@@ -37,24 +32,24 @@ export class Lungo extends Router {
 
     const next: INextFunc = (error?: unknown) => {
       if (error) {
-        return callback(error)
+        return this.handleError(req, res, error)
       }
       if (index >= midllewareRoutes.length) {
-        return this.handleRoute(req, res, next, callback)
+        return this.handleRoute(req, res, next)
       }
 
       const handler = midllewareRoutes[index++].handler
 
       try {
         handler(req, res, next)
-      } catch (err: unknown) {
+      } catch (err) {
         next(err)
       }
     }
     next()
   }
 
-  private handleRoute(req: Request, res: Response, next: INextFunc, callback: Function): void {
+  private handleRoute(req: Request, res: Response, next: INextFunc): void {
     const route = this.stack.find((route) => route.method === req.method && route.path === req.url)
 
     if (!route) {
@@ -66,7 +61,32 @@ export class Lungo extends Router {
     try {
       route.handler(req, res, next)
     } catch (err) {
-      callback(err)
+      next(err)
     }
+  }
+
+  private handleError(req: Request, res: Response, error?: unknown): void {
+    if (!error) return
+
+    if (this.eventEmitter.eventNames().includes('error')) {
+      this.eventEmitter.emit('error', req, res, error)
+      return
+    }
+
+    res.writeHead(StatusCodes.INTERNAL_SERVER_ERROR)
+
+    if (!(error instanceof Error)) {
+      res.end()
+      return
+    }
+
+    res.end(error.stack)
+
+    if (process.env.NODE_ENV === 'TEST') return
+    console.error(error.stack)
+  }
+
+  public on(eventName: string, callback: (...args: any[]) => void): void {
+    this.eventEmitter.on(eventName, callback)
   }
 }

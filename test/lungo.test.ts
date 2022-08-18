@@ -40,20 +40,6 @@ describe('Lungo Class', () => {
       // assert
       expect(res.statusCode).toEqual(StatusCodes.OK)
     })
-
-    test('should response with internal server error when handler throws error', async () => {
-      // arrange
-      app.use((req: Request, res: Response) => {
-        throw new Error()
-      })
-      server = app.listen(3001)
-
-      // act
-      const res = await request(server).get('/')
-
-      // assert
-      expect(res.statusCode).toEqual(StatusCodes.INTERNAL_SERVER_ERROR)
-    })
   })
 
   describe('handleRoute method', () => {
@@ -68,12 +54,37 @@ describe('Lungo Class', () => {
       // assert
       expect(res.statusCode).toEqual(StatusCodes.OK)
     })
+  })
 
-    test('should response with internal server error when route throws error', async () => {
+  describe('error event', () => {
+    test('should handle the error', async () => {
       // arrange
       app.get('/test', (req: Request, res: Response) => {
         throw new Error()
       })
+
+      const errorResponse = 'error handled'
+
+      app.on('error', (req: Request, res: Response, err: Error) => {
+        res.send(errorResponse)
+      })
+
+      server = app.listen(3001)
+
+      // act
+      const res = await request(server).get('/test')
+
+      // assert
+      expect(res.statusCode).toEqual(StatusCodes.OK)
+      expect(res.text).toEqual(errorResponse)
+    })
+
+    test('should throw internal server error when error event not used', async () => {
+      // arrange
+      app.get('/test', (req: Request, res: Response) => {
+        throw new Error()
+      })
+
       server = app.listen(3001)
 
       // act
