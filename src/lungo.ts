@@ -24,13 +24,22 @@ export class Lungo extends Router {
   }
 
   public handleRequest(req: Request, res: Response): void {
+    if (!req.url) return
+
     req.onMounted()
 
-    let index = 0
+    const url = req.url.includes('?') ? req.url.split('?')[0] : req.url
+
+    const routePaths = url.split('/').map((route) => route.replace(/^/, '/'))
+    const fullRoutes = routePaths.map((routeName, i) =>
+      i < 2 ? routeName : routePaths[i - 1] + routeName
+    )
 
     const midllewareRoutes = this.stack.filter(
-      (route) => !route.method && (route.path === '/' || route.path === req.url)
+      (route) => !route.method && fullRoutes.includes(route.path)
     )
+
+    let index = 0
 
     const next: INextFunc = (error?: unknown) => {
       if (error) {

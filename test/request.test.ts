@@ -2,7 +2,7 @@ import request from 'supertest'
 import { Server } from 'http'
 import { Lungo, Request, Response } from '../src/index'
 
-describe('Response Class', () => {
+describe('Request Class', () => {
   let app: Lungo
   let server: Server
 

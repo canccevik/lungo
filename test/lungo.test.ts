@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import request from 'supertest'
 import { Server } from 'http'
-import { Lungo, Request, Response } from '../src/index'
+import { Lungo, Request, Response, Router } from '../src/index'
 import { StatusCodes } from 'http-status-codes'
 
 describe('Lungo Class', () => {
@@ -26,7 +26,7 @@ describe('Lungo Class', () => {
     })
   })
 
-  describe('handle method', () => {
+  describe('handleRequest method', () => {
     test('should execute handlers', async () => {
       // arrange
       app.use((req: Request, res: Response) => {
@@ -39,6 +39,33 @@ describe('Lungo Class', () => {
 
       // assert
       expect(res.statusCode).toEqual(StatusCodes.OK)
+    })
+
+    test('should execute handlers for routes', async () => {
+      // arrange
+      const packageRouter = new Router()
+
+      packageRouter.use((req, res, next) => {
+        req.params.version = 1
+        next()
+      })
+
+      packageRouter.get('/:packageName', (req, res) => {
+        res.send({
+          version: req.params.version,
+          packageName: req.params.packageName
+        })
+      })
+
+      app.use('/packages', packageRouter)
+      server = app.listen(3001)
+
+      // act
+      const res = await request(server).get('/packages/lungo')
+
+      // assert
+      expect(res.body.version).toEqual(1)
+      expect(res.body.packageName).toEqual('lungo')
     })
   })
 
