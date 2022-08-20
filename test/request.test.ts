@@ -81,4 +81,36 @@ describe('Response Class', () => {
       expect(res.body.packageName).toEqual('lungo')
     })
   })
+
+  describe('query property', () => {
+    test('should be defined as empty object if queries not provided', async () => {
+      // arrange
+      app.get('/test', (req: Request, res: Response) => {
+        res.send(req.query)
+      })
+      server = app.listen(3001)
+
+      // act
+      const res = await request(server).get('/test')
+
+      // assert
+      expect(res.body).toEqual({})
+    })
+
+    test('should queries be accessible ', async () => {
+      // arrange
+      app.get('/packages', (req: Request, res: Response) => {
+        res.send({
+          packageName: req.query.packageName
+        })
+      })
+      server = app.listen(3001)
+
+      // act
+      const res = await request(server).get('/packages?packageName=lungo')
+
+      // assert
+      expect(res.body.packageName).toEqual('lungo')
+    })
+  })
 })

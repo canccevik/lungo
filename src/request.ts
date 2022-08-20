@@ -1,14 +1,14 @@
 import { IncomingMessage } from 'http'
-import { Socket } from 'net'
+import qs from 'qs'
 
 export class Request extends IncomingMessage {
   public ip?: string
   public params: { [key: string]: unknown } = {}
+  public query: { [key: string]: unknown } = {}
 
-  constructor(socket: Socket) {
-    super(socket)
-
+  public onMounted(): void {
     this.ip = this.getIpAddress()
+    this.query = this.getQuery()
   }
 
   public get(field: string): string | undefined {
@@ -19,5 +19,14 @@ export class Request extends IncomingMessage {
     const forwardedAddress = this.get('x-forwarded-for')?.toString().split(',').shift()
     const remoteAddress = this.socket.remoteAddress?.toString().replace('::ffff:', '')
     return forwardedAddress ?? remoteAddress
+  }
+
+  private getQuery(): { [key: string]: unknown } {
+    if (!this.url) return {}
+
+    const queryString = this.url.split('?')[1]
+    const queries = qs.parse(queryString)
+
+    return queries
   }
 }

@@ -24,6 +24,8 @@ export class Lungo extends Router {
   }
 
   public handleRequest(req: Request, res: Response): void {
+    req.onMounted()
+
     let index = 0
 
     const midllewareRoutes = this.stack.filter(
@@ -50,11 +52,15 @@ export class Lungo extends Router {
   }
 
   private handleRoute(req: Request, res: Response, next: INextFunc): void {
+    if (!req.url) return
+
+    const url = req.url.includes('?') ? req.url.split('?')[0] : req.url
+
     const route = this.stack.find((route) => {
-      if (route.method !== req.method || !req.url) return
+      if (route.method !== req.method) return
 
       const routeParams = route.path.split('/').filter((x) => x !== '')
-      const urlParams = req.url.split('/').filter((x) => x !== '')
+      const urlParams = url.split('/').filter((x) => x !== '')
 
       if (routeParams.length !== urlParams?.length) return
 
@@ -62,7 +68,7 @@ export class Lungo extends Router {
         .filter((param) => param.startsWith(':'))
         .map((param) => routeParams.indexOf(param))
 
-      if (!routeParamIndexes.length && route.path === req.url) return route
+      if (!routeParamIndexes.length && route.path === url) return route
 
       const urlReplacedWithRouteParams = urlParams
         .map((param, i) => (routeParamIndexes.includes(i) ? routeParams.at(i) : param))
@@ -79,7 +85,7 @@ export class Lungo extends Router {
 
     if (!route) {
       res.writeHead(StatusCodes.NOT_FOUND)
-      res.end(`Cannot ${req.method} ${req.url}`)
+      res.end(`Cannot ${req.method} ${url}`)
       return
     }
 
