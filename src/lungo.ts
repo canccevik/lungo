@@ -50,7 +50,32 @@ export class Lungo extends Router {
   }
 
   private handleRoute(req: Request, res: Response, next: INextFunc): void {
-    const route = this.stack.find((route) => route.method === req.method && route.path === req.url)
+    const route = this.stack.find((route) => {
+      if (route.method !== req.method || !req.url) return
+
+      const routeParams = route.path.split('/').filter((x) => x !== '')
+      const urlParams = req.url.split('/').filter((x) => x !== '')
+
+      if (routeParams.length !== urlParams?.length) return
+
+      const routeParamIndexes = routeParams
+        .filter((param) => param.startsWith(':'))
+        .map((param) => routeParams.indexOf(param))
+
+      if (!routeParamIndexes.length && route.path === req.url) return route
+
+      const urlReplacedWithRouteParams = urlParams
+        .map((param, i) => (routeParamIndexes.includes(i) ? routeParams.at(i) : param))
+        .join('/')
+        .replace(/^/, '/')
+
+      if (route.path !== urlReplacedWithRouteParams) return
+
+      routeParamIndexes.forEach((i) => {
+        req.params[routeParams[i].replace(/^./, '')] = urlParams[i]
+      })
+      return route
+    })
 
     if (!route) {
       res.writeHead(StatusCodes.NOT_FOUND)

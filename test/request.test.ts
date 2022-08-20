@@ -47,4 +47,38 @@ describe('Response Class', () => {
       expect(res.text).toEqual('127.0.0.1')
     })
   })
+
+  describe('params property', () => {
+    test('should be defined as empty object if params not provided', async () => {
+      // arrange
+      app.get('/test', (req: Request, res: Response) => {
+        res.send(req.params)
+      })
+      server = app.listen(3001)
+
+      // act
+      const res = await request(server).get('/test')
+
+      // assert
+      expect(res.body).toEqual({})
+    })
+
+    test('should params be accessible ', async () => {
+      // arrange
+      app.get('/:version/packages/:packageName', (req: Request, res: Response) => {
+        res.send({
+          version: req.params.version,
+          packageName: req.params.packageName
+        })
+      })
+      server = app.listen(3001)
+
+      // act
+      const res = await request(server).get('/v1/packages/lungo')
+
+      // assert
+      expect(res.body.version).toEqual('v1')
+      expect(res.body.packageName).toEqual('lungo')
+    })
+  })
 })

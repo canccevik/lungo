@@ -3,6 +3,7 @@ import { Socket } from 'net'
 
 export class Request extends IncomingMessage {
   public ip?: string
+  public params: { [key: string]: unknown } = {}
 
   constructor(socket: Socket) {
     super(socket)
