@@ -145,4 +145,20 @@ describe('Request Class', () => {
       expect(res.text).toEqual('/packages')
     })
   })
+
+  describe('path property', () => {
+    test('should be defined', async () => {
+      // arrange
+      app.get('/packages/:packageId/settings', (req: Request, res: Response) => {
+        res.end(req.path)
+      })
+      server = app.listen(3001)
+
+      // act
+      const res = await request(server).get('/packages/12/settings')
+
+      // assert
+      expect(res.text).toEqual('/settings')
+    })
+  })
 })

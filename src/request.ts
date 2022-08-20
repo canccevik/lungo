@@ -5,6 +5,7 @@ export class Request extends IncomingMessage {
   public ip?: string
   public originalUrl = ''
   public baseUrl = ''
+  public path = ''
   public params: { [key: string]: unknown } = {}
   public query: { [key: string]: unknown } = {}
 
@@ -13,6 +14,7 @@ export class Request extends IncomingMessage {
     this.query = this.getQuery()
     this.originalUrl = this.getOriginalUrl()
     this.baseUrl = this.getBaseUrl()
+    this.path = this.getPath()
   }
 
   public get(field: string): string | undefined {
@@ -45,5 +47,16 @@ export class Request extends IncomingMessage {
       return '/' + this.url.split('?')[0].split('/')[1]
     }
     return '/' + this.url.split('/')[1]
+  }
+
+  private getPath(): string {
+    if (!this.url) return ''
+
+    let routes = this.url.split('/')
+
+    if (this.url.includes('?')) {
+      routes = this.url.split('?')[0].split('/')
+    }
+    return '/' + routes[routes.length - 1]
   }
 }
