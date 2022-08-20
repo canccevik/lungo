@@ -4,6 +4,7 @@ import qs from 'qs'
 export class Request extends IncomingMessage {
   public ip?: string
   public originalUrl = ''
+  public baseUrl = ''
   public params: { [key: string]: unknown } = {}
   public query: { [key: string]: unknown } = {}
 
@@ -11,6 +12,7 @@ export class Request extends IncomingMessage {
     this.ip = this.getIpAddress()
     this.query = this.getQuery()
     this.originalUrl = this.getOriginalUrl()
+    this.baseUrl = this.getBaseUrl()
   }
 
   public get(field: string): string | undefined {
@@ -34,5 +36,14 @@ export class Request extends IncomingMessage {
 
   private getOriginalUrl(): string {
     return this.url ?? ''
+  }
+
+  private getBaseUrl(): string {
+    if (!this.url) return ''
+
+    if (this.url.includes('?')) {
+      return '/' + this.url.split('?')[0].split('/')[1]
+    }
+    return '/' + this.url.split('/')[1]
   }
 }

@@ -129,4 +129,20 @@ describe('Request Class', () => {
       expect(res.text).toEqual('/packages?packageName=lungo')
     })
   })
+
+  describe('baseUrl property', () => {
+    test('should be defined', async () => {
+      // arrange
+      app.get('/packages', (req: Request, res: Response) => {
+        res.end(req.baseUrl)
+      })
+      server = app.listen(3001)
+
+      // act
+      const res = await request(server).get('/packages?packageName=lungo')
+
+      // assert
+      expect(res.text).toEqual('/packages')
+    })
+  })
 })
