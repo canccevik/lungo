@@ -35,7 +35,7 @@ export class Lungo extends Router {
       i < 2 ? routeName : routePaths[i - 1] + routeName
     )
 
-    const midllewareRoutes = this.stack.filter(
+    const middlewareRoutes = this.stack.filter(
       (route) => !route.method && fullRoutes.includes(route.path)
     )
 
@@ -45,11 +45,11 @@ export class Lungo extends Router {
       if (error) {
         return this.handleError(req, res, error)
       }
-      if (index >= midllewareRoutes.length) {
+      if (index >= middlewareRoutes.length) {
         return this.handleRoute(req, res, next)
       }
 
-      const handler = midllewareRoutes[index++].handler
+      const handler = middlewareRoutes[index++].handler
 
       try {
         handler(req, res, next)

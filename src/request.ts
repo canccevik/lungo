@@ -3,12 +3,14 @@ import qs from 'qs'
 
 export class Request extends IncomingMessage {
   public ip?: string
+  public originalUrl = ''
   public params: { [key: string]: unknown } = {}
   public query: { [key: string]: unknown } = {}
 
   public onMounted(): void {
     this.ip = this.getIpAddress()
     this.query = this.getQuery()
+    this.originalUrl = this.getOriginalUrl()
   }
 
   public get(field: string): string | undefined {
@@ -28,5 +30,9 @@ export class Request extends IncomingMessage {
     const queries = qs.parse(queryString)
 
     return queries
+  }
+
+  private getOriginalUrl(): string {
+    return this.url ?? ''
   }
 }
