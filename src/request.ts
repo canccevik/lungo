@@ -10,7 +10,7 @@ export class Request extends IncomingMessage {
   public path = ''
   public params: { [key: string]: unknown } = {}
   public query: { [key: string]: unknown } = {}
-  public body: { [key: string]: unknown } = {}
+  public body: any
 
   public onMounted(): void {
     this.ip = this.getIpAddress()

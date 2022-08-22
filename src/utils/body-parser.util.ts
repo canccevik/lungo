@@ -1,4 +1,5 @@
 import { Request } from '../request'
+import { isJSON } from './is-json.util'
 
 export async function parseBody(req: Request): Promise<Request> {
   return new Promise((resolve, reject) => {
@@ -9,12 +10,8 @@ export async function parseBody(req: Request): Promise<Request> {
     })
 
     req.on('end', () => {
-      try {
-        if (body.length > 0) {
-          req.body = JSON.parse(body)
-        }
-      } catch (error) {
-        reject(new Error("Request's body is not a valid JSON."))
+      if (body.length > 0) {
+        req.body = isJSON(body) ? JSON.parse(body) : body
       }
       resolve(req)
     })
