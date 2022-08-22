@@ -231,13 +231,13 @@ describe('Request Class', () => {
     test('should return the mime type when one of them accepted', async () => {
       // arrange
       app.post('/test', (req: Request, res: Response) => {
-        const accepts = req.accepts('application/json', 'text/html')
+        const accepts = req.accepts('text/html', 'application/xml')
         res.end(accepts)
       })
       server = app.listen(3001)
 
       // act
-      const res = await request(server).post('/test').set('accept', 'text/html')
+      const res = await request(server).post('/test').set('accept', 'application/json, text/html')
 
       // assert
       expect(res.text).toEqual('text/html')
@@ -252,7 +252,7 @@ describe('Request Class', () => {
       server = app.listen(3001)
 
       // act
-      const res = await request(server).post('/test').set('accept', 'text/html')
+      const res = await request(server).post('/test').set('accept', 'text/html, application/xml')
 
       // assert
       expect(res.text).toEqual('false')
