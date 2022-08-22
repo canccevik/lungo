@@ -5,6 +5,7 @@ import { INextFunc } from './interfaces'
 import { Request } from './request'
 import { Response } from './response'
 import { Router } from './router'
+import { parseBody } from './utils'
 
 export class Lungo extends Router {
   private eventEmitter = new EventEmitter()
@@ -15,7 +16,12 @@ export class Lungo extends Router {
     }
 
     const handler = (req: IncomingMessage, res: ServerResponse): void => {
-      this.handleRequest(req as Request, res as Response)
+      const request = req as Request
+      const response = res as Response
+
+      parseBody(request)
+        .then((request) => this.handleRequest(request, response))
+        .catch((error) => this.handleError(request, response, error))
     }
 
     return http

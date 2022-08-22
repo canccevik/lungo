@@ -1,6 +1,7 @@
 import request from 'supertest'
 import { Server } from 'http'
 import { Lungo, Request, Response } from '../src/index'
+import { StatusCodes } from 'http-status-codes'
 
 describe('Request Class', () => {
   let app: Lungo
@@ -159,6 +160,40 @@ describe('Request Class', () => {
 
       // assert
       expect(res.text).toEqual('/settings')
+    })
+  })
+
+  describe('body property', () => {
+    test('should be defined', async () => {
+      // arrange
+      const newPackage = { packageName: 'lungo' }
+
+      app.post('/packages', (req: Request, res: Response) => {
+        res.send(req.body)
+      })
+      server = app.listen(3001)
+
+      // act
+      const res = await request(server).post('/packages').send(newPackage)
+
+      // assert
+      expect(res.body).toEqual(newPackage)
+    })
+
+    test('should response with error when json is not valid', async () => {
+      // arrange
+      const unvalidJSON = "{packageName: 'lungo'}"
+
+      app.post('/packages', (req: Request, res: Response) => {
+        res.send(req.body)
+      })
+      server = app.listen(3001)
+
+      // act
+      const res = await request(server).post('/packages').send(unvalidJSON)
+
+      // assert
+      expect(res.statusCode).toEqual(StatusCodes.INTERNAL_SERVER_ERROR)
     })
   })
 })

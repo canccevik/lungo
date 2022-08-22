@@ -2,6 +2,7 @@ import { IncomingMessage } from 'http'
 import qs from 'qs'
 
 export class Request extends IncomingMessage {
+  public body = {}
   public ip?: string
   public originalUrl = ''
   public baseUrl = ''
