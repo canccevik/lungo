@@ -3,6 +3,7 @@ import qs from 'qs'
 
 export class Request extends IncomingMessage {
   public body = {}
+  public cookies?: object
   public ip?: string
   public originalUrl = ''
   public baseUrl = ''
