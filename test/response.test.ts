@@ -3,6 +3,7 @@ import { Server } from 'http'
 import { Lungo, Request, Response } from '../src/index'
 import { getReasonPhrase, StatusCodes } from 'http-status-codes'
 import cookie from 'cookie'
+import fs from 'fs'
 
 describe('Response Class', () => {
   let app: Lungo
@@ -232,6 +233,64 @@ describe('Response Class', () => {
         .get('/test')
         .expect(StatusCodes.MOVED_PERMANENTLY)
         .expect('Location', '/example')
+    })
+  })
+
+  describe('sendFile method', () => {
+    test('should send the file via response', async () => {
+      // arrange
+      const filePath = __dirname + '/file.txt'
+      fs.appendFileSync(filePath, 'Test file')
+
+      app.get('/file', (req: Request, res: Response) => {
+        res.sendFile(filePath)
+      })
+
+      server = app.listen(3001)
+
+      // act & assert
+      await request(server)
+        .get('/file')
+        .expect(StatusCodes.OK)
+        .expect('Content-Type', 'text/plain')
+        .responseType('blob')
+
+      fs.unlinkSync(filePath)
+    })
+
+    test('should response with error for nonexistent file', async () => {
+      // arrange
+      app.get('/file', (req: Request, res: Response) => {
+        res.sendFile(__dirname + '/file.txt')
+      })
+
+      server = app.listen(3001)
+
+      // act
+      const res = await request(server).get('/file')
+
+      // assert
+      expect(res.statusCode).toEqual(StatusCodes.NOT_FOUND)
+    })
+
+    test('should response with error for unknown file extension', async () => {
+      // arrange
+      const filePath = __dirname + '/file.x'
+      fs.appendFileSync(filePath, 'Test file')
+
+      app.get('/file', (req: Request, res: Response) => {
+        res.sendFile(filePath)
+      })
+
+      server = app.listen(3001)
+
+      // act
+      const res = await request(server).get('/file')
+
+      // assert
+      expect(res.statusCode).toEqual(StatusCodes.BAD_REQUEST)
+
+      fs.unlinkSync(filePath)
     })
   })
 })

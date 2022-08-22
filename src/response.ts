@@ -2,6 +2,8 @@ import { ServerResponse } from 'http'
 import mimeTypes from 'mime-types'
 import { getReasonPhrase, StatusCodes } from 'http-status-codes'
 import cookie, { CookieSerializeOptions } from 'cookie'
+import path from 'path'
+import fs from 'fs'
 
 export class Response extends ServerResponse {
   public status(statusCode: number): this {
@@ -72,5 +74,34 @@ export class Response extends ServerResponse {
 
   public redirect(url: string): void {
     this.status(StatusCodes.MOVED_PERMANENTLY).set('Location', url).end()
+  }
+
+  public sendFile(filePath: string): void {
+    const fileExtension = path.extname(filePath)
+    const fileBasename = path.basename(filePath)
+    const isFileExits = fs.existsSync(filePath)
+
+    if (!isFileExits) {
+      const message = `File ${fileBasename} cannot found!`
+      this.status(StatusCodes.NOT_FOUND).send(message)
+      return
+    }
+
+    const fileStats = fs.statSync(filePath)
+    const contentType = mimeTypes.lookup(fileExtension)
+
+    if (!contentType) {
+      const message = `File extension is not valid for ${fileBasename}`
+      this.status(StatusCodes.BAD_REQUEST).send(message)
+      return
+    }
+
+    this.set({
+      'Content-Type': contentType,
+      'Content-Length': fileStats.size
+    })
+
+    const stream = fs.createReadStream(filePath)
+    stream.pipe(this)
   }
 }
