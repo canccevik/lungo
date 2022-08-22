@@ -268,7 +268,7 @@ describe('Response Class', () => {
     test('should response with error for nonexistent file', async () => {
       // arrange
       app.get('/file', (req: Request, res: Response) => {
-        res.sendFile(filePaths[0])
+        res.sendFile(__dirname + '/test.x')
       })
 
       server = app.listen(3001)
@@ -328,20 +328,22 @@ describe('Response Class', () => {
   })
 
   describe('render method', () => {
-    const filePath = __dirname + '/index.pug'
+    const filePaths = [__dirname + '/index.pug', __dirname + '/file.x']
 
     afterEach(() => {
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath)
-      }
+      filePaths.forEach((path) => {
+        if (fs.existsSync(path)) {
+          fs.unlinkSync(path)
+        }
+      })
     })
 
     test('should render the pug file', async () => {
       // arrange
-      fs.appendFileSync(filePath, 'p Package name: #{packageName}')
+      fs.appendFileSync(filePaths[0], 'p Package name: #{packageName}')
 
       app.get('/', (req: Request, res: Response) => {
-        res.render(filePath, { packageName: 'lungo' })
+        res.render(filePaths[0], { packageName: 'lungo' })
       })
 
       server = app.listen(3001)
@@ -353,6 +355,38 @@ describe('Response Class', () => {
       expect(res.statusCode).toEqual(StatusCodes.OK)
       expect(res.get('Content-Type')).toEqual('text/html; charset=utf-8')
       expect(res.text).toEqual('<p>Package name: lungo</p>')
+    })
+
+    test('should response with error for invalid file extension', async () => {
+      // arrange
+      fs.appendFileSync(filePaths[1], 'p Package name: #{packageName}')
+
+      app.get('/', (req: Request, res: Response) => {
+        res.render(filePaths[1], { packageName: 'lungo' })
+      })
+
+      server = app.listen(3001)
+
+      // act
+      const res = await request(server).get('/')
+
+      // assert
+      expect(res.statusCode).toEqual(StatusCodes.BAD_REQUEST)
+    })
+
+    test('should response with error for nonexistent file', async () => {
+      // arrange
+      app.get('/file', (req: Request, res: Response) => {
+        res.sendFile(__dirname + '/text.x')
+      })
+
+      server = app.listen(3001)
+
+      // act
+      const res = await request(server).get('/file')
+
+      // assert
+      expect(res.statusCode).toEqual(StatusCodes.NOT_FOUND)
     })
   })
 })
