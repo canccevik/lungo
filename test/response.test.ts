@@ -311,6 +311,7 @@ describe('Response Class', () => {
         .get('/download')
         .expect(StatusCodes.OK)
         .expect('Content-Type', 'text/plain')
+        .expect('Content-Disposition', 'attachment; filename=file.txt')
         .responseType('blob')
 
       fs.unlinkSync(filePath)
