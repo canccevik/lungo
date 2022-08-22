@@ -196,4 +196,66 @@ describe('Request Class', () => {
       expect(res.statusCode).toEqual(StatusCodes.INTERNAL_SERVER_ERROR)
     })
   })
+
+  describe('accepts method ', () => {
+    test('should return the mime type for */*', async () => {
+      // arrange
+      app.post('/test', (req: Request, res: Response) => {
+        const accepts = req.accepts('application/json')
+        res.end(accepts)
+      })
+      server = app.listen(3001)
+
+      // act
+      const res = await request(server).post('/test').set('accept', '*/*')
+
+      // assert
+      expect(res.text).toEqual('application/json')
+    })
+
+    test('should return the mime type when its accepted', async () => {
+      // arrange
+      app.post('/test', (req: Request, res: Response) => {
+        const accepts = req.accepts('text/html')
+        res.end(accepts)
+      })
+      server = app.listen(3001)
+
+      // act
+      const res = await request(server).post('/test').set('accept', 'text/html')
+
+      // assert
+      expect(res.text).toEqual('text/html')
+    })
+
+    test('should return the mime type when one of them accepted', async () => {
+      // arrange
+      app.post('/test', (req: Request, res: Response) => {
+        const accepts = req.accepts('application/json', 'text/html')
+        res.end(accepts)
+      })
+      server = app.listen(3001)
+
+      // act
+      const res = await request(server).post('/test').set('accept', 'text/html')
+
+      // assert
+      expect(res.text).toEqual('text/html')
+    })
+
+    test('should return false when mime type is not accepted', async () => {
+      // arrange
+      app.post('/test', (req: Request, res: Response) => {
+        const accepts = req.accepts('application/json')
+        res.send(accepts)
+      })
+      server = app.listen(3001)
+
+      // act
+      const res = await request(server).post('/test').set('accept', 'text/html')
+
+      // assert
+      expect(res.text).toEqual('false')
+    })
+  })
 })

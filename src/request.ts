@@ -1,8 +1,8 @@
 import { IncomingMessage } from 'http'
+import mimeTypes from 'mime-types'
 import qs from 'qs'
 
 export class Request extends IncomingMessage {
-  public body = {}
   public cookies?: object
   public ip?: string
   public originalUrl = ''
@@ -10,6 +10,7 @@ export class Request extends IncomingMessage {
   public path = ''
   public params: { [key: string]: unknown } = {}
   public query: { [key: string]: unknown } = {}
+  public body: { [key: string]: unknown } = {}
 
   public onMounted(): void {
     this.ip = this.getIpAddress()
@@ -60,5 +61,22 @@ export class Request extends IncomingMessage {
       routes = this.url.split('?')[0].split('/')
     }
     return '/' + routes[routes.length - 1]
+  }
+
+  public accepts(...types: string[]): string | boolean {
+    const type = types.find((type) => {
+      const acceptHeader = this.get('accept')
+      const mimeType = mimeTypes.contentType(type).toString().split(';')[0]
+
+      if (acceptHeader && acceptHeader === '*/*') {
+        return type
+      }
+
+      if (!mimeType || !acceptHeader) return
+
+      return acceptHeader === mimeType ? mimeType : false
+    })
+
+    return type ?? false
   }
 }
