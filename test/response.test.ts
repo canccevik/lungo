@@ -215,4 +215,23 @@ describe('Response Class', () => {
       expect(packageName).toEqual('lungo')
     })
   })
+
+  describe('redirect method', () => {
+    test('should redirect to given url', async () => {
+      // arrange
+      app.get('/test', (req: Request, res: Response) => {
+        res.redirect('/example')
+      })
+
+      app.get('/example', (req: Request, res: Response) => res.end())
+
+      server = app.listen(3001)
+
+      // act & assert
+      await request(server)
+        .get('/test')
+        .expect(StatusCodes.MOVED_PERMANENTLY)
+        .expect('Location', '/example')
+    })
+  })
 })

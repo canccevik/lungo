@@ -1,6 +1,6 @@
 import { ServerResponse } from 'http'
 import mimeTypes from 'mime-types'
-import { getReasonPhrase } from 'http-status-codes'
+import { getReasonPhrase, StatusCodes } from 'http-status-codes'
 import cookie, { CookieSerializeOptions } from 'cookie'
 
 export class Response extends ServerResponse {
@@ -52,8 +52,8 @@ export class Response extends ServerResponse {
   }
 
   public set(object: object): this
-  public set(field: string, value: string): this
-  public set(fieldOrObject: string | object, value?: string): this {
+  public set(field: string, value: string | number): this
+  public set(fieldOrObject: string | object, value?: string | number): this {
     if (typeof fieldOrObject === 'string' && value) {
       this.setHeader(fieldOrObject, value)
       return this
@@ -68,5 +68,9 @@ export class Response extends ServerResponse {
   public cookie(name: string, value: string, options?: CookieSerializeOptions): this {
     this.set('set-cookie', cookie.serialize(name, value, options))
     return this
+  }
+
+  public redirect(url: string): void {
+    this.status(StatusCodes.MOVED_PERMANENTLY).set('Location', url).end()
   }
 }
