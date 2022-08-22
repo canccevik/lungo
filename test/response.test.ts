@@ -293,4 +293,27 @@ describe('Response Class', () => {
       fs.unlinkSync(filePath)
     })
   })
+
+  describe('download method', () => {
+    test('should download the file', async () => {
+      // arrange
+      const filePath = __dirname + '/file.txt'
+      fs.appendFileSync(filePath, 'Test file')
+
+      app.get('/download', (req: Request, res: Response) => {
+        res.download(filePath)
+      })
+
+      server = app.listen(3001)
+
+      // act & assert
+      await request(server)
+        .get('/download')
+        .expect(StatusCodes.OK)
+        .expect('Content-Type', 'text/plain')
+        .responseType('blob')
+
+      fs.unlinkSync(filePath)
+    })
+  })
 })

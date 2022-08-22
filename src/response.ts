@@ -104,4 +104,10 @@ export class Response extends ServerResponse {
     const stream = fs.createReadStream(filePath)
     stream.pipe(this)
   }
+
+  public download(filePath: string): void {
+    const fileBasename = path.basename(filePath)
+    this.set('Content-Disposition', `attachment; filename=${fileBasename}`)
+    this.sendFile(filePath)
+  }
 }
