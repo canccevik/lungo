@@ -237,13 +237,22 @@ describe('Response Class', () => {
   })
 
   describe('sendFile method', () => {
+    const filePaths = [__dirname + '/file.txt', __dirname + '/file.x']
+
+    afterEach(() => {
+      filePaths.forEach((path) => {
+        if (fs.existsSync(path)) {
+          fs.unlinkSync(path)
+        }
+      })
+    })
+
     test('should send the file via response', async () => {
       // arrange
-      const filePath = __dirname + '/file.txt'
-      fs.appendFileSync(filePath, 'Test file')
+      fs.appendFileSync(filePaths[0], 'Test file')
 
       app.get('/file', (req: Request, res: Response) => {
-        res.sendFile(filePath)
+        res.sendFile(filePaths[0])
       })
 
       server = app.listen(3001)
@@ -254,14 +263,12 @@ describe('Response Class', () => {
         .expect(StatusCodes.OK)
         .expect('Content-Type', 'text/plain')
         .responseType('blob')
-
-      fs.unlinkSync(filePath)
     })
 
     test('should response with error for nonexistent file', async () => {
       // arrange
       app.get('/file', (req: Request, res: Response) => {
-        res.sendFile(__dirname + '/file.txt')
+        res.sendFile(filePaths[0])
       })
 
       server = app.listen(3001)
@@ -275,11 +282,10 @@ describe('Response Class', () => {
 
     test('should response with error for unknown file extension', async () => {
       // arrange
-      const filePath = __dirname + '/file.x'
-      fs.appendFileSync(filePath, 'Test file')
+      fs.appendFileSync(filePaths[1], 'Test file')
 
       app.get('/file', (req: Request, res: Response) => {
-        res.sendFile(filePath)
+        res.sendFile(filePaths[1])
       })
 
       server = app.listen(3001)
@@ -289,15 +295,20 @@ describe('Response Class', () => {
 
       // assert
       expect(res.statusCode).toEqual(StatusCodes.BAD_REQUEST)
-
-      fs.unlinkSync(filePath)
     })
   })
 
   describe('download method', () => {
+    const filePath = __dirname + '/file.txt'
+
+    afterEach(() => {
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath)
+      }
+    })
+
     test('should download the file', async () => {
       // arrange
-      const filePath = __dirname + '/file.txt'
       fs.appendFileSync(filePath, 'Test file')
 
       app.get('/download', (req: Request, res: Response) => {
@@ -313,8 +324,35 @@ describe('Response Class', () => {
         .expect('Content-Type', 'text/plain')
         .expect('Content-Disposition', 'attachment; filename=file.txt')
         .responseType('blob')
+    })
+  })
 
-      fs.unlinkSync(filePath)
+  describe('render method', () => {
+    const filePath = __dirname + '/index.pug'
+
+    afterEach(() => {
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath)
+      }
+    })
+
+    test('should render the pug file', async () => {
+      // arrange
+      fs.appendFileSync(filePath, 'p Package name: #{packageName}')
+
+      app.get('/', (req: Request, res: Response) => {
+        res.render(filePath, { packageName: 'lungo' })
+      })
+
+      server = app.listen(3001)
+
+      // act
+      const res = await request(server).get('/')
+
+      // assert
+      expect(res.statusCode).toEqual(StatusCodes.OK)
+      expect(res.get('Content-Type')).toEqual('text/html; charset=utf-8')
+      expect(res.text).toEqual('<p>Package name: lungo</p>')
     })
   })
 })

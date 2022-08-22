@@ -3,6 +3,7 @@ import mimeTypes from 'mime-types'
 import { getReasonPhrase, StatusCodes } from 'http-status-codes'
 import cookie, { CookieSerializeOptions } from 'cookie'
 import path from 'path'
+import pug from 'pug'
 import fs from 'fs'
 
 export class Response extends ServerResponse {
@@ -109,5 +110,27 @@ export class Response extends ServerResponse {
     const fileBasename = path.basename(filePath)
     this.set('Content-Disposition', `attachment; filename=${fileBasename}`)
     this.sendFile(filePath)
+  }
+
+  public render(filePath: string, locals: object = {}): void {
+    const fileExtension = path.extname(filePath)
+    const fileBasename = path.basename(filePath)
+    const isFileExits = fs.existsSync(filePath)
+
+    if (!isFileExits) {
+      const message = `File ${fileBasename} cannot found!`
+      this.status(StatusCodes.NOT_FOUND).send(message)
+      return
+    }
+
+    if (fileExtension !== '.pug') {
+      const message = `Extension ${fileExtension} is not suitable for rendering!`
+      this.status(StatusCodes.BAD_REQUEST).send(message)
+      return
+    }
+
+    const html = pug.compileFile(filePath)(locals)
+
+    this.type('text/html').send(html)
   }
 }
