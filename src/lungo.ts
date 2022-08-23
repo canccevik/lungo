@@ -20,7 +20,10 @@ export class Lungo extends Router {
       const response = res as Response
 
       parseBody(request)
-        .then((request) => this.handleRequest(request, response))
+        .then((request) => {
+          request.onMounted()
+          this.handleRequest(request, response)
+        })
         .catch((error) => this.handleError(request, response, error))
     }
 
@@ -32,17 +35,15 @@ export class Lungo extends Router {
   public handleRequest(req: Request, res: Response): void {
     if (!req.url) return
 
-    req.onMounted()
-
     const url = req.url.includes('?') ? req.url.split('?')[0] : req.url
 
-    const routePaths = url.split('/').map((route) => route.replace(/^/, '/'))
-    const fullRoutes = routePaths.map((routeName, i) =>
+    const routePaths = url.split('/').map((path) => path.replace(/^/, '/'))
+    const fullRoutePaths = routePaths.map((routeName, i) =>
       i < 2 ? routeName : routePaths[i - 1] + routeName
     )
 
     const middlewareRoutes = this.stack.filter(
-      (route) => !route.method && fullRoutes.includes(route.path)
+      (route) => !route.method && fullRoutePaths.includes(route.path)
     )
 
     let index = 0
@@ -77,7 +78,7 @@ export class Lungo extends Router {
       const routeParams = route.path.split('/').filter((x) => x !== '')
       const urlParams = url.split('/').filter((x) => x !== '')
 
-      if (routeParams.length !== urlParams?.length) return
+      if (urlParams && urlParams.length !== routeParams.length) return
 
       const routeParamIndexes = routeParams
         .filter((param) => param.startsWith(':'))
@@ -93,13 +94,14 @@ export class Lungo extends Router {
       if (route.path !== urlReplacedWithRouteParams) return
 
       routeParamIndexes.forEach((i) => {
-        req.params[routeParams[i].replace(/^./, '')] = urlParams[i]
+        const paramName = routeParams[i].replace(/^./, '')
+        req.params[paramName] = urlParams[i]
       })
       return route
     })
 
     if (!route) {
-      res.writeHead(StatusCodes.NOT_FOUND)
+      res.status(StatusCodes.NOT_FOUND)
       res.end(`Cannot ${req.method} ${url}`)
       return
     }
@@ -111,15 +113,13 @@ export class Lungo extends Router {
     }
   }
 
-  private handleError(req: Request, res: Response, error?: unknown): void {
-    if (!error) return
-
+  private handleError(req: Request, res: Response, error: unknown): void {
     if (this.eventEmitter.eventNames().includes('error')) {
       this.eventEmitter.emit('error', req, res, error)
       return
     }
 
-    res.writeHead(StatusCodes.INTERNAL_SERVER_ERROR)
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR)
 
     if (!(error instanceof Error)) {
       res.end()
@@ -128,8 +128,9 @@ export class Lungo extends Router {
 
     res.end(error.stack)
 
-    if (process.env.NODE_ENV === 'TEST') return
-    console.error(error.stack)
+    if (process.env.NODE_ENV !== 'TEST') {
+      console.error(error.stack)
+    }
   }
 
   public on(eventName: string, callback: (...args: any[]) => void): void {
