@@ -14,6 +14,7 @@ export class Route {
         this.stack.push({ path, handler, method: null })
       })
       this.stack.push({ path, method, handler })
+      return
     }
     this.stack.push({ path, method, handler: handlerOrMiddlewares as IHandler })
   }
