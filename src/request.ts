@@ -83,4 +83,15 @@ export class Request extends IncomingMessage {
     })
     return type ?? false
   }
+
+  public is(type: string): string | boolean | null {
+    if (!this.body) return null
+
+    const contentType = this.get('content-type')
+    const mimeType = mimeTypes.contentType(type).toString().split(';')[0]
+
+    if (!contentType) return false
+
+    return mimeType === contentType ? mimeType : false
+  }
 }

@@ -257,4 +257,54 @@ describe('Request Class', () => {
       expect(res.text).toEqual('false')
     })
   })
+
+  describe('is method', () => {
+    test('should return the content type', async () => {
+      // arrange
+      app.post('/test', (req: Request, res: Response) => {
+        const type = req.is('application/json')
+        res.end(type)
+      })
+
+      server = app.listen(3001)
+
+      // act
+      const res = await request(server).post('/test').send({})
+
+      // assert
+      expect(res.text).toEqual('application/json')
+    })
+
+    test('should return false when type does not match with content type', async () => {
+      // arrange
+      app.post('/test', (req: Request, res: Response) => {
+        const type = req.is('application/json') as any
+        res.send(type)
+      })
+
+      server = app.listen(3001)
+
+      // act
+      const res = await request(server).post('/test').type('text/html').send('<p></p>')
+
+      // assert
+      expect(res.body).toEqual(false)
+    })
+
+    test('should return false when body is null', async () => {
+      // arrange
+      app.get('/test', (req: Request, res: Response) => {
+        const type = req.is('application/json') as any
+        res.send(type)
+      })
+
+      server = app.listen(3001)
+
+      // act
+      const res = await request(server).get('/test')
+
+      // assert
+      expect(res.body).toEqual(null)
+    })
+  })
 })
