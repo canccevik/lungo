@@ -3,14 +3,21 @@ import mimeTypes from 'mime-types'
 import qs from 'qs'
 
 export class Request extends IncomingMessage {
-  public cookies?: object
-  public ip?: string
-  public originalUrl = ''
-  public baseUrl = ''
-  public path = ''
-  public params: { [key: string]: unknown } = {}
-  public query: { [key: string]: unknown } = {}
   public body: any
+
+  public cookies?: object
+
+  public ip?: string
+
+  public originalUrl!: string
+
+  public baseUrl!: string
+
+  public path!: string
+
+  public params: { [key: string]: unknown } = {}
+
+  public query: { [key: string]: unknown } = {}
 
   public onMounted(): void {
     this.ip = this.getIpAddress()
@@ -35,7 +42,6 @@ export class Request extends IncomingMessage {
 
     const queryString = this.url.split('?')[1]
     const queries = qs.parse(queryString)
-
     return queries
   }
 
