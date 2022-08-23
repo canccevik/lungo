@@ -13,8 +13,7 @@ export class Response extends ServerResponse {
   }
 
   public type(type: string): this {
-    const mimeType =
-      mimeTypes.lookup(type) === false ? mimeTypes.contentType(type) : mimeTypes.lookup(type)
+    const mimeType = mimeTypes.contentType(type)
 
     if (!mimeType) {
       throw new Error('Mime type is not valid.')
@@ -27,7 +26,7 @@ export class Response extends ServerResponse {
     this.end(JSON.stringify(body))
   }
 
-  public send(body: string | object | Buffer | boolean): void {
+  public send(body: unknown): void {
     if (typeof body === 'string') {
       this.type('text/html')
     } else if (typeof body === 'object' || typeof body === 'boolean') {
@@ -44,10 +43,7 @@ export class Response extends ServerResponse {
 
   public sendStatus(statusCode: number): void {
     const reasonPhrase = getReasonPhrase(statusCode)
-
-    this.type('text/plain')
-    this.status(statusCode)
-    this.end(reasonPhrase)
+    this.type('text/plain').status(statusCode).end(reasonPhrase)
   }
 
   public get(field: string): string | string[] | number | undefined {
@@ -130,7 +126,6 @@ export class Response extends ServerResponse {
     }
 
     const html = pug.compileFile(filePath)(locals)
-
     this.type('text/html').send(html)
   }
 }

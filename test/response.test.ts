@@ -45,7 +45,7 @@ describe('Response Class', () => {
       const res = await request(server).get('/test')
 
       // assert
-      expect(res.get('Content-Type')).toEqual('application/json')
+      expect(res.get('Content-Type')).toEqual('application/json; charset=utf-8')
     })
 
     test('should throw error for unknown mime type', async () => {

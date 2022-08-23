@@ -15,7 +15,8 @@ export class Router extends Route {
       return
     }
 
-    const router = routerOrHandler as Router
+    const router = routerOrHandler as Route
+
     const modifiedRoutes = router.stack.map((route) => {
       const path = `${pathOrHandler}/${route.path}`.replace(/\/+/g, '/')
       route.path = path === '/' ? path : path.replace(/\/+$/, '')
