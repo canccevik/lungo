@@ -155,10 +155,10 @@ describe('Request Class', () => {
       server = app.listen(3001)
 
       // act
-      const res = await request(server).get('/packages/12/settings')
+      const res = await request(server).get('/packages/12/settings?lang=en')
 
       // assert
-      expect(res.text).toEqual('/settings')
+      expect(res.text).toEqual('/packages/12/settings')
     })
   })
 

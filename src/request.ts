@@ -61,12 +61,9 @@ export class Request extends IncomingMessage {
   private getPath(): string {
     if (!this.url) return ''
 
-    let routes = this.url.split('/')
+    const path = this.url.split('?')[0]
 
-    if (this.url.includes('?')) {
-      routes = this.url.split('?')[0].split('/')
-    }
-    return '/' + routes[routes.length - 1]
+    return path
   }
 
   public accepts(...types: string[]): string | boolean {

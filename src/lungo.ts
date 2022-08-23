@@ -32,7 +32,7 @@ export class Lungo extends Router {
       .listen(port)
   }
 
-  public handleRequest(req: Request, res: Response): void {
+  private handleRequest(req: Request, res: Response): void {
     if (!req.url) return
 
     const url = req.url.includes('?') ? req.url.split('?')[0] : req.url
