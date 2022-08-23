@@ -27,7 +27,7 @@ export class Response extends ServerResponse {
   }
 
   public send(body: unknown): void {
-    if (typeof body === 'string') {
+    if (typeof body === 'string' || typeof body === 'number') {
       this.type('text/html')
     } else if (typeof body === 'object' || typeof body === 'boolean') {
       this.type('application/json')

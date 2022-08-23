@@ -37,24 +37,6 @@ describe('Router Class', () => {
       expect(res.statusCode).toEqual(StatusCodes.CREATED)
     })
 
-    test('should handle as a get route when path is given', async () => {
-      // arrange
-      const handler = (req: Request, res: Response): void => {
-        res.status(201).end()
-      }
-
-      router.use('/test', handler)
-      app.use('/', router)
-      server = app.listen(3001)
-
-      // act
-      const res = await request(server).get('/test')
-
-      // assert
-      expect(app.stack[0]).toEqual({ path: '/test', method: 'GET', handler })
-      expect(res.statusCode).toEqual(StatusCodes.CREATED)
-    })
-
     test('should serialize all of the routers', async () => {
       // arrange
       const userRouter = new Router()

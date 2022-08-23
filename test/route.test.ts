@@ -1,6 +1,6 @@
 import request from 'supertest'
 import { Server } from 'http'
-import { Lungo, Request, Response, Router } from '../src/index'
+import { INextFunc, Lungo, Request, Response, Router } from '../src/index'
 import { StatusCodes } from 'http-status-codes'
 
 describe('Route Class', () => {
@@ -90,5 +90,26 @@ describe('Route Class', () => {
 
     // assert
     expect(res.statusCode).toEqual(StatusCodes.NO_CONTENT)
+  })
+
+  test('should execute middleware first then route handler', async () => {
+    // arrange
+    const middleware = (req: Request, res: Response, next: INextFunc): void => {
+      req.params.packageName = 'lungo'
+      next()
+    }
+
+    router.get('/test', [middleware], (req: Request, res: Response) => {
+      res.end(req.params.packageName)
+    })
+
+    app.use('/', router)
+    server = app.listen(3001)
+
+    // act
+    const res = await request(server).get('/test')
+
+    // assert
+    expect(res.text).toEqual('lungo')
   })
 })
