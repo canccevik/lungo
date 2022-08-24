@@ -61,13 +61,13 @@
 # Installation
 
 ```ts
-npm install lungo
+npm install lungojs
 ```
 
 # Basic Usage
 
 ```ts
-import { Lungo, Request, Response } from 'lungo'
+import { Lungo, Request, Response } from 'lungojs'
 
 const app = new Lungo()
 
@@ -153,6 +153,8 @@ app.on('error', (req: Request, res: Response, error: Error) => {
 ```
 
 ### app.use(handler)
+
+> Most of ExpressJS middleware packages works well with Lungo.
 
 Executes given handler before execute requested route handler.
 
@@ -516,6 +518,8 @@ app.use('/user', userRouter)
 ```
 
 ### router.use(handler)
+
+> Most of ExpressJS middleware packages works well with Lungo.
 
 Executes given handler before execute requested route handler.
 

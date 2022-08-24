@@ -1,11 +1,17 @@
 {
-  "name": "lungo",
-  "version": "0.0.1",
-  "description": "",
+  "name": "lungojs",
+  "version": "1.0.0",
+  "description": "⚡A fast web framework for node.",
   "author": "Can Çevik <mazlumcancevik@gmail.com>",
   "license": "MIT",
-  "keywords": [],
+  "keywords": [
+    "http-server",
+    "http-framework"
+  ],
   "main": "dist/src/index.js",
+  "files": [
+    "dist/src"
+  ],
   "scripts": {
     "build": "tsc",
     "build:dev": "tsc --watch",
@@ -40,5 +46,8 @@
     "mime-types": "^2.1.35",
     "pug": "^3.0.2",
     "qs": "^6.11.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
