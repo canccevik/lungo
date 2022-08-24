@@ -15,9 +15,9 @@ export class Request extends IncomingMessage {
 
   public path!: string
 
-  public params: { [key: string]: unknown } = {}
+  public params: Record<string, unknown> = {}
 
-  public query: { [key: string]: unknown } = {}
+  public query: Record<string, unknown> = {}
 
   public onMounted(): void {
     this.ip = this.getIpAddress()
@@ -37,7 +37,7 @@ export class Request extends IncomingMessage {
     return forwardedAddress ?? remoteAddress
   }
 
-  private getQuery(): { [key: string]: unknown } {
+  private getQuery(): Record<string, unknown> {
     if (!this.url) return {}
 
     const queryString = this.url.split('?')[1]
