@@ -555,5 +555,3 @@ app.use('/user', userRouter)
 # License
 
 Lungo is [MIT licensed](https://github.com/canccevik/lungo/blob/master/LICENSE).
-
-Copyright (c) 2022 [Can Çevik](https://github.com/canccevik)
