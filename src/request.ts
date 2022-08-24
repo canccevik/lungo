@@ -5,8 +5,6 @@ import qs from 'qs'
 export class Request extends IncomingMessage {
   public body: any
 
-  public cookies?: object
-
   public ip?: string
 
   public originalUrl!: string
@@ -14,6 +12,8 @@ export class Request extends IncomingMessage {
   public baseUrl!: string
 
   public path!: string
+
+  public cookies?: Record<string, unknown>
 
   public params: Record<string, unknown> = {}
 
