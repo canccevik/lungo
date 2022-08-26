@@ -75,27 +75,22 @@ export class Lungo extends Router {
     const route = this.stack.find((route) => {
       if (route.method !== req.method) return
 
-      const routeParams = route.path.split('/').filter((x) => x !== '')
-      const urlParams = url.split('/').filter((x) => x !== '')
+      const urlParams = url.split('/').slice(1)
+      const routeParams = route.path.split('/').slice(1)
+      const dynamicRouteParams = routeParams.filter((param) => param.startsWith(':'))
 
-      if (urlParams && urlParams.length !== routeParams.length) return
+      if (!dynamicRouteParams && route.path === url) return route
 
-      const routeParamIndexes = routeParams
-        .filter((param) => param.startsWith(':'))
-        .map((param) => routeParams.indexOf(param))
-
-      if (!routeParamIndexes.length && route.path === url) return route
-
-      const urlReplacedWithRouteParams = urlParams
-        .map((param, i) => (routeParamIndexes.includes(i) ? routeParams.at(i) : param))
+      const routePathConvertedToUrl = routeParams
+        .map((param, i) => (param.startsWith(':') ? urlParams.at(i) : param))
         .join('/')
         .replace(/^/, '/')
 
-      if (route.path !== urlReplacedWithRouteParams) return
+      if (routePathConvertedToUrl !== url) return
 
-      routeParamIndexes.forEach((i) => {
-        const paramName = routeParams[i].replace(/^./, '')
-        req.params[paramName] = urlParams[i]
+      dynamicRouteParams.forEach((param) => {
+        const paramName = param.slice(1)
+        req.params[paramName] = urlParams.at(routeParams.indexOf(param))
       })
       return route
     })
