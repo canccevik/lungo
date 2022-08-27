@@ -163,7 +163,7 @@ describe('Request Class', () => {
   })
 
   describe('body property', () => {
-    test('should be defined as object', async () => {
+    test('should serialize json', async () => {
       // arrange
       const newPackage = { packageName: 'lungo' }
 
@@ -179,7 +179,29 @@ describe('Request Class', () => {
       expect(res.body).toEqual(newPackage)
     })
 
-    test('should be defined as string', async () => {
+    test('should serialize form urlencoded', async () => {
+      // arrange
+      const data = 'packageName=lungo&version=1.0.0'
+
+      app.post('/packages', (req: Request, res: Response) => {
+        res.send(req.body)
+      })
+      server = app.listen(3001)
+
+      // act
+      const res = await request(server)
+        .post('/packages')
+        .type('application/x-www-form-urlencoded')
+        .send(data)
+
+      // assert
+      expect(res.body).toEqual({
+        packageName: 'lungo',
+        version: '1.0.0'
+      })
+    })
+
+    test('should serialize text', async () => {
       // arrange
       const html = '<html></html>'
 
@@ -189,7 +211,7 @@ describe('Request Class', () => {
       server = app.listen(3001)
 
       // act
-      const res = await request(server).post('/packages').send(html)
+      const res = await request(server).post('/packages').type('html').send(html)
 
       // assert
       expect(res.text).toEqual(html)
