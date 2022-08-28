@@ -1,6 +1,7 @@
 import request from 'supertest'
 import { Server } from 'http'
-import { Lungo, Request, Response } from '../src/index'
+import { Lungo, Request, Response, uploadFile } from '../src/index'
+import fs from 'fs'
 
 describe('Request Class', () => {
   let app: Lungo
@@ -327,6 +328,45 @@ describe('Request Class', () => {
 
       // assert
       expect(res.body).toEqual(null)
+    })
+  })
+
+  describe('files property', () => {
+    test('should be defined when uploadFile middleware used', async () => {
+      // arrange
+      fs.appendFileSync(__dirname + '/file.txt', 'test file')
+
+      app.post('/upload-file', [uploadFile()], (req: Request, res: Response) => {
+        res.send({
+          files: req.files,
+          fields: req.body
+        })
+      })
+
+      server = app.listen(3001)
+
+      // act
+      const res = await request(server)
+        .post('/upload-file')
+        .type('multipart/form-data')
+        .field('packageName', 'lungo')
+        .attach('file', __dirname + '/file.txt')
+
+      // assert
+      expect(res.body.files['file']).toBeDefined()
+      expect(res.body.files['file'].lastModifiedDate).toBeDefined()
+      expect(res.body.files['file'].filepath).toBeDefined()
+      expect(res.body.files['file'].newFilename).toBeDefined()
+      expect(res.body.files['file'].mimetype).toBeDefined()
+      expect(res.body.files['file'].hashAlgorithm).toBeDefined()
+      expect(res.body.files['file'].size).toBeDefined()
+      expect(res.body.files['file'].hash).toBeDefined()
+      expect(res.body.files['file'].originalFilename).toEqual('file.txt')
+      expect(res.body.fields).toEqual({ packageName: 'lungo' })
+
+      // clean
+      fs.unlinkSync(__dirname + '/file.txt')
+      fs.unlinkSync(res.body.files['file'].filepath)
     })
   })
 })

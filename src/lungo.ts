@@ -19,11 +19,20 @@ export class Lungo extends Router {
       const request = req as Request
       const response = res as Response
 
+      const initRequest = (parsedRequest?: Request): void => {
+        request.onMounted()
+        this.handleRequest(parsedRequest || request, response)
+      }
+
+      const contentType = request.get('content-type')?.split(';')[0]
+
+      if (contentType === 'multipart/form-data') {
+        initRequest()
+        return
+      }
+
       parseBody(request)
-        .then((request) => {
-          request.onMounted()
-          this.handleRequest(request, response)
-        })
+        .then((parsedRequest) => initRequest(parsedRequest))
         .catch((error) => this.handleError(request, response, error))
     }
 

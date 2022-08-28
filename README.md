@@ -24,6 +24,7 @@
       - [baseUrl](#reqbaseurl)
       - [body](#reqbody)
       - [cookies](#reqcookies)
+      - [files](#reqfiles)
       - [ip](#reqip)
       - [method](#reqmethod)
       - [originalUrl](#reqoriginalurl)
@@ -55,6 +56,8 @@
     - [Methods](#methods-3)
       - [METHOD](#routermethodpath-handler)
       - [use](#routerusehandler)
+  - [Middlewares](#middlewares)
+    - [uploadFile()](#uploadfileoptions)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -197,12 +200,22 @@ app.get('/', (req: Request, res: Response) => {
 
 ### req.cookies
 
-When using cookie-parser middleware, this property is an object that contains cookies sent by the request. If the request contains no cookies, it defaults to {}.
+When using [cookie-parser](https://www.npmjs.com/package/cookie-parser) middleware, this property is an object that contains cookies sent by the request. If the request contains no cookies, it defaults to {}.
 
 ```ts
 // Cookie: packageName=lungo
 console.log(req.cookies.packageName)
 // => "lungo"
+```
+
+### req.files
+
+When using built-in [uploadFile](#uploadfileoptions) middleware, this property is an object that contains files sent by the request.
+
+```ts
+// Content-Type: multipart/form-data
+// Content-Disposition: attachment; filename="logo"
+console.log(req.files.logo)
 ```
 
 ### req.ip
@@ -541,6 +554,23 @@ app.use('/user', userRouter)
 // GET /user/hello
 // => "Router middleware executed!"
 // => "Hello from user router!"
+```
+
+## Middlewares
+
+### uploadFile(options?)
+
+> You can get more information about options from [here](https://www.npmjs.com/package/formidable#options).
+
+The uploadFile() middleware provides the uploading file functionality to your route.
+
+```ts
+app.post('/upload-file', [uploadFile()], (req: Request, res: Response) => {
+  res.send({
+    files: req.files, // contains informations about uploaded files, such as filepath etc.
+    fields: req.body // contains form fields if they sent with form data
+  })
+})
 ```
 
 # Contributing

@@ -19,6 +19,8 @@ export class Request extends IncomingMessage {
 
   public query: Record<string, unknown> = {}
 
+  public files?: Record<string, Record<string, unknown>>
+
   public onMounted(): void {
     this.ip = this.getIpAddress()
     this.query = this.getQuery()
