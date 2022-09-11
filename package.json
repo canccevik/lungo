@@ -1,6 +1,6 @@
 {
   "name": "lungojs",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "⚡A fast web framework for node.",
   "author": "Can Çevik <mazlumcancevik@gmail.com>",
   "license": "MIT",
@@ -49,6 +49,14 @@
     "pug": "^3.0.2",
     "qs": "^6.11.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/canccevik/lungo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/canccevik/lungo/issues"
+  },
+  "homepage": "https://github.com/canccevik/lungo#readme",
   "publishConfig": {
     "access": "public"
   }
