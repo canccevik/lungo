@@ -5,6 +5,8 @@ import cookie, { CookieSerializeOptions } from 'cookie'
 import path from 'path'
 import pug from 'pug'
 import fs from 'fs'
+import { InvalidMimeException } from './exceptions/invalid-mime-type-exception'
+import { InvalidBodyTypeException } from './exceptions/invalid-body-type-exception'
 
 export class Response extends ServerResponse {
   public status(statusCode: number): this {
@@ -16,7 +18,7 @@ export class Response extends ServerResponse {
     const mimeType = mimeTypes.contentType(type)
 
     if (!mimeType) {
-      throw new Error('Mime type is not valid.')
+      throw new InvalidMimeException()
     }
     return this.setHeader('Content-Type', mimeType)
   }
@@ -34,7 +36,7 @@ export class Response extends ServerResponse {
     } else if ((body as Buffer) instanceof Buffer) {
       this.type('application/octet-stream')
     } else {
-      throw new Error('Type of body is not valid.')
+      throw new InvalidBodyTypeException()
     }
 
     const response = typeof body === 'string' ? body : JSON.stringify(body)

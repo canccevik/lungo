@@ -6,13 +6,14 @@ import { Request } from './request'
 import { Response } from './response'
 import { Router } from './router'
 import { parseBody } from './utils'
+import { PortIsNotProvidedException } from './exceptions/not-provided-port-exception'
 
 export class Lungo extends Router {
   private eventEmitter = new EventEmitter()
 
   public listen(port: string | number): Server {
     if (!port) {
-      throw new Error('Port is not provided.')
+      throw new PortIsNotProvidedException()
     }
 
     const handler = (req: IncomingMessage, res: ServerResponse): void => {
