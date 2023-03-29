@@ -2,7 +2,7 @@
 <img src="https://i.imgur.com/Kvxbc8A.png" alt="Lungo Logo" width="500" height="150"/>
 </p>
 
-<p align="center">⚡A fast web framework for node.</p>
+<p align="center">⚡A minimalist and high-performance HTTP web framework that makes it easy to build APIs with speed and efficiency.</p>
 
 # Table of Contents
 

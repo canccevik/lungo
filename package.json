@@ -1,7 +1,7 @@
 {
   "name": "lungojs",
-  "version": "1.1.1",
-  "description": "⚡A fast web framework for node.",
+  "version": "1.1.2",
+  "description": "⚡A minimalist and high-performance HTTP web framework that makes it easy to build APIs with speed and efficiency.",
   "author": "Can Çevik <mazlumcancevik@gmail.com>",
   "license": "MIT",
   "keywords": [
@@ -9,6 +9,7 @@
     "http-framework"
   ],
   "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "files": [
     "dist/src"
   ],

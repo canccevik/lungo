@@ -13,7 +13,7 @@ export class Request extends IncomingMessage {
 
   public path!: string
 
-  public cookies?: Record<string, unknown>
+  public cookies?: Record<string, string>
 
   public params: Record<string, unknown> = {}
 
