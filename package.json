@@ -14,6 +14,7 @@
     "dist/src"
   ],
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "build": "tsc",
     "build:dev": "tsc --watch",
     "test": "cross-env NODE_ENV=TEST jest --verbose --maxWorkers=1",

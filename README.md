@@ -63,10 +63,23 @@
 
 # Installation
 
-```ts
+Using npm:
+
+```js
 npm install lungojs
 ```
 
+Using yarn:
+
+```js
+yarn add lungojs
+```
+
+Using pnpm:
+
+```js
+pnpm add lungojs
+```
 # Basic Usage
 
 ```ts
