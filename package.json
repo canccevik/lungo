@@ -1,6 +1,6 @@
 {
   "name": "lungojs",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "⚡A minimalist and high-performance HTTP web framework that makes it easy to build APIs with speed and efficiency.",
   "author": "Can Çevik <mazlumcancevik@gmail.com>",
   "license": "MIT",
