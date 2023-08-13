@@ -1,6 +1,6 @@
 import request from 'supertest'
 import { Server } from 'http'
-import { Lungo, Request, Response, bodyParser, uploadFile } from '../src/index'
+import { Lungo, Request, Response, bodyParser, fileUploader } from '../src/index'
 import fs from 'fs'
 
 describe('Request Class', () => {
@@ -324,7 +324,7 @@ describe('Request Class', () => {
       // arrange
       fs.appendFileSync(__dirname + '/file.txt', 'test file')
 
-      app.post('/upload-file', [uploadFile()], (req: Request, res: Response) => {
+      app.post('/upload-file', [fileUploader()], (req: Request, res: Response) => {
         res.send({
           files: req.files,
           fields: req.body

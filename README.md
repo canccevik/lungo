@@ -58,7 +58,7 @@
       - [use](#routerusehandler)
   - [Middlewares](#middlewares)
     - [bodyParser()](#bodyparser)
-    - [uploadFile()](#uploadfileoptions)
+    - [fileUploader()](#fileuploaderoptions)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -225,7 +225,7 @@ console.log(req.cookies.packageName)
 
 ### req.files
 
-When using built-in [uploadFile](#uploadfileoptions) middleware, this property is an object that contains files sent by the request.
+When using built-in [fileUploader](#uploadfileoptions) middleware, this property is an object that contains files sent by the request.
 
 ```ts
 // Content-Type: multipart/form-data
@@ -586,14 +586,14 @@ app.post('/access-body', (req: Request, res: Response) => {
 })
 ```
 
-### uploadFile(options?)
+### fileUploader(options?)
 
 > You can get more information about options from [here](https://www.npmjs.com/package/formidable#options).
 
-The uploadFile() middleware provides the uploading file functionality to your route.
+The fileUploader() middleware provides the uploading file functionality to your route.
 
 ```ts
-app.post('/upload-file', [uploadFile()], (req: Request, res: Response) => {
+app.post('/upload-file', [fileUploader()], (req: Request, res: Response) => {
   res.send({
     files: req.files, // contains informations about uploaded files, such as filepath etc.
     fields: req.body // contains form fields if they sent with form data

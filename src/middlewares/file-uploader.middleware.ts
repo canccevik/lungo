@@ -9,14 +9,13 @@ const defaultOptions: Options = {
   uploadDir: process.cwd()
 }
 
-export function uploadFile(options: Options = defaultOptions): IHandler {
+export function fileUploader(options: Options = defaultOptions): IHandler {
   return function (req: Request, res: Response, next: INextFunc): void {
     const form = formidable(options)
 
     form.parse(req, (error, fields, files) => {
       if (error) {
-        next(error)
-        return
+        return next(error)
       }
       req.body = fields
       req.files = serializeFiles(files)

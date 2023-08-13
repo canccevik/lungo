@@ -1,2 +1,2 @@
-export * from './upload-file.middleware'
+export * from './file-uploader.middleware'
 export * from './body-parser.middleware'
