@@ -1,6 +1,7 @@
 import { IncomingMessage } from 'http'
 import mimeTypes from 'mime-types'
 import qs from 'qs'
+import accepts from 'accepts'
 
 export class Request extends IncomingMessage {
   public body: any = null
@@ -60,25 +61,8 @@ export class Request extends IncomingMessage {
     return path
   }
 
-  public accepts(...types: string[]): string | boolean {
-    const acceptHeader = this.get('accept')
-
-    if (!acceptHeader) return false
-
-    const acceptedTypes = acceptHeader.includes(',')
-      ? acceptHeader.replace(/\s/g, '').split(',')
-      : [acceptHeader]
-
-    if (acceptedTypes.includes('*/*')) return types[0]
-
-    const type = types.find((type) => {
-      const mimeType = mimeTypes.contentType(type).toString().split(';')[0]
-
-      if (!mimeType) return
-
-      return acceptedTypes.includes(mimeType) ? mimeType : null
-    })
-    return type ?? false
+  public accepts(...types: string[]): string | string[] | boolean {
+    return accepts(this).type(types)
   }
 
   public is(type: string): string | boolean | null {
