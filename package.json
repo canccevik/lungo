@@ -15,6 +15,7 @@
   ],
   "scripts": {
     "release": "release-it",
+    "version": "auto-changelog -p && git add CHANGELOG.md",
     "preinstall": "npx only-allow pnpm",
     "build": "tsc",
     "build:dev": "tsc --watch",
@@ -24,7 +25,6 @@
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\""
   },
   "devDependencies": {
-    "@release-it/conventional-changelog": "^7.0.0",
     "@types/cookie": "^0.5.1",
     "@types/formidable": "^2.0.5",
     "@types/jest": "^28.1.6",
@@ -35,6 +35,7 @@
     "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^5.30.7",
     "@typescript-eslint/parser": "^5.30.7",
+    "auto-changelog": "^2.4.0",
     "cross-env": "^7.0.3",
     "eslint": "^8.20.0",
     "eslint-config-prettier": "^8.5.0",
