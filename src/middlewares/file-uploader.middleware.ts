@@ -25,16 +25,14 @@ export function fileUploader(options: Options = defaultOptions): IHandler {
 }
 
 function serializeFiles(files: Files): Record<string, Record<string, unknown>> {
-  const serializedFiles: Record<string, Record<string, unknown>> = {}
-
-  Object.keys(files).forEach((fieldName) => {
-    const fileObject: Record<string, unknown> = {}
-
-    Object.keys(files[fieldName]).forEach((key) => {
-      if (key.startsWith('_')) return
-      fileObject[key] = (files[fieldName] as any)[key]
+  return Object.assign(
+    {},
+    ...Object.keys(files).map((fileName) => {
+      return {
+        [fileName]: Object.fromEntries(
+          Object.entries(files[fileName]).filter(([key]) => !key.startsWith('_'))
+        )
+      }
     })
-    serializedFiles[fieldName] = fileObject
-  })
-  return serializedFiles
+  )
 }
