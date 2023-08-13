@@ -4,6 +4,8 @@ import { ErrorHandler, INextFunc } from './interfaces'
 import { Request } from './request'
 import { Response } from './response'
 import { Router } from './router'
+import { match } from 'path-to-regexp'
+import url from 'url'
 
 export class Lungo extends Router {
   private errorHandler?: ErrorHandler
@@ -30,7 +32,6 @@ export class Lungo extends Router {
     if (!req.url) return
 
     const url = req.url.includes('?') ? req.url.split('?')[0] : req.url
-
     const routePaths = url.split('/').map((path) => path.replace(/^/, '/'))
     const fullRoutePaths = routePaths.map((routeName, i) =>
       i < 2 ? routeName : routePaths[i - 1] + routeName
@@ -62,36 +63,25 @@ export class Lungo extends Router {
   }
 
   private handleRoute(req: Request, res: Response, next: INextFunc): void {
-    if (!req.url) return
+    const pathName = req.url && url.parse(req.url).pathname
 
-    const url = req.url.includes('?') ? req.url.split('?')[0] : req.url
+    const route =
+      pathName &&
+      this.stack
+        .filter((route) => route.method === req.method)
+        .find((route) => {
+          const matcher = match(route.path)
+          const matchedRoute = matcher(pathName)
 
-    const route = this.stack.find((route) => {
-      if (route.method !== req.method) return
+          if (!matchedRoute) return
 
-      const urlParams = url.split('/').slice(1)
-      const routeParams = route.path.split('/').slice(1)
-      const dynamicRouteParams = routeParams.filter((param) => param.startsWith(':'))
-
-      if (!dynamicRouteParams && route.path === url) return route
-
-      const routePathConvertedToUrl = routeParams
-        .map((param, i) => (param.startsWith(':') ? urlParams.at(i) : param))
-        .join('/')
-        .replace(/^/, '/')
-
-      if (routePathConvertedToUrl !== url) return
-
-      dynamicRouteParams.forEach((param) => {
-        const paramName = param.slice(1)
-        req.params[paramName] = urlParams.at(routeParams.indexOf(param))
-      })
-      return route
-    })
+          req.params = Object.assign(req.params, matchedRoute.params)
+          return route
+        })
 
     if (!route) {
       res.status(StatusCodes.NOT_FOUND)
-      res.end(`Cannot ${req.method} ${url}`)
+      res.end(`Cannot ${req.method} ${pathName}`)
       return
     }
 

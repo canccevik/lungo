@@ -12,11 +12,11 @@ export class Router extends Route {
 
     if (!router) return
 
-    const modifiedRoutes = router.stack.map((route) => {
+    const mergedRoutes = router.stack.map((route) => {
       const path = `${pathOrHandler}/${route.path}`.replace(/\/+/g, '/')
       route.path = path === '/' ? path : path.replace(/\/+$/, '')
       return route
     })
-    this.stack.push(...modifiedRoutes)
+    this.stack.push(...mergedRoutes)
   }
 }
