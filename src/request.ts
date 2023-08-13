@@ -2,6 +2,7 @@ import { IncomingMessage } from 'http'
 import mimeTypes from 'mime-types'
 import qs from 'qs'
 import accepts from 'accepts'
+import url from 'url'
 
 export class Request extends IncomingMessage {
   public body: any = null
@@ -54,11 +55,8 @@ export class Request extends IncomingMessage {
   }
 
   private getPath(): string {
-    if (!this.url) return ''
-
-    const path = this.url.split('?')[0]
-
-    return path
+    const pathName = this.url && url.parse(this.url).pathname
+    return pathName ?? ''
   }
 
   public accepts(...types: string[]): string | string[] | boolean {
