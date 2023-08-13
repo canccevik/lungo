@@ -305,7 +305,7 @@ describe('Request Class', () => {
     test('should return false when type does not match with content type', async () => {
       // arrange
       app.post('/test', (req: Request, res: Response) => {
-        const type = req.is('application/json') as any
+        const type = req.is('application/json')
         res.send(type)
       })
 
