@@ -1,14 +1,13 @@
 import http, { IncomingMessage, Server, ServerResponse } from 'http'
 import { StatusCodes } from 'http-status-codes'
-import { EventEmitter } from 'stream'
-import { INextFunc } from './interfaces'
+import { ErrorHandler, INextFunc } from './interfaces'
 import { Request } from './request'
 import { Response } from './response'
 import { Router } from './router'
 import { parseBody } from './utils'
 
 export class Lungo extends Router {
-  private eventEmitter = new EventEmitter()
+  private errorHandler?: ErrorHandler
 
   public listen(port: string | number): Server {
     if (!port) {
@@ -118,9 +117,8 @@ export class Lungo extends Router {
   }
 
   private handleError(req: Request, res: Response, error: unknown): void {
-    if (this.eventEmitter.eventNames().includes('error')) {
-      this.eventEmitter.emit('error', req, res, error)
-      return
+    if (this.errorHandler) {
+      return this.errorHandler(req, res, error)
     }
 
     res.status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -130,14 +128,13 @@ export class Lungo extends Router {
       return
     }
 
-    res.end(error.stack)
-
-    if (process.env.NODE_ENV !== 'TEST') {
+    if (process.env.NODE_ENV !== 'test') {
       console.error(error.stack)
     }
+    res.end(error.stack)
   }
 
-  public on(eventName: string, callback: (...args: any[]) => void): void {
-    this.eventEmitter.on(eventName, callback)
+  public onError(handler: ErrorHandler): void {
+    this.errorHandler = handler
   }
 }

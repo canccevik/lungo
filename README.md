@@ -80,6 +80,7 @@ Using pnpm:
 ```js
 pnpm add lungojs
 ```
+
 # Basic Usage
 
 ```ts
@@ -158,12 +159,12 @@ app.put('/', (req: Request, res: Response) => {
 })
 ```
 
-### app.on(eventName, callback)
+### app.onError(errorHandler)
 
-Executes given callback when application emits an event with specified event name.
+Executes given callback when application throws an error.
 
 ```ts
-app.on('error', (req: Request, res: Response, error: Error) => {
+app.onError((req: Request, res: Response, error: unknown) => {
   res.send('Error received: ' + error.message)
 })
 ```

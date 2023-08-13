@@ -83,7 +83,7 @@ describe('Lungo Class', () => {
     })
   })
 
-  describe('error event', () => {
+  describe('onError method', () => {
     test('should handle the error', async () => {
       // arrange
       app.get('/test', (req: Request, res: Response) => {
@@ -92,7 +92,7 @@ describe('Lungo Class', () => {
 
       const errorResponse = 'error handled'
 
-      app.on('error', (req: Request, res: Response, err: Error) => {
+      app.onError((req: Request, res: Response, error: unknown) => {
         res.send(errorResponse)
       })
 
@@ -106,7 +106,7 @@ describe('Lungo Class', () => {
       expect(res.text).toEqual(errorResponse)
     })
 
-    test('should throw internal server error when error event not used', async () => {
+    test('should throw internal server error when error handler not used', async () => {
       // arrange
       app.get('/test', (req: Request, res: Response) => {
         throw new Error()
