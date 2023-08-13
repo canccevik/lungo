@@ -42,12 +42,7 @@ export class Request extends IncomingMessage {
   }
 
   private getBaseUrl(): string {
-    if (!this.url) return ''
-
-    if (this.url.includes('?')) {
-      return '/' + this.url.split('?')[0].split('/')[1]
-    }
-    return '/' + this.url.split('/')[1]
+    return (this.url && url.parse(this.url).pathname) ?? ''
   }
 
   private getPath(): string {
