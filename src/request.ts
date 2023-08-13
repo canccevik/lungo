@@ -1,6 +1,5 @@
 import { IncomingMessage } from 'http'
 import mimeTypes from 'mime-types'
-import qs from 'qs'
 import accepts from 'accepts'
 import url from 'url'
 
@@ -35,10 +34,7 @@ export class Request extends IncomingMessage {
 
   private getQuery(): Record<string, unknown> {
     if (!this.url) return {}
-
-    const queryString = this.url.split('?')[1]
-    const queries = qs.parse(queryString)
-    return queries
+    return url.parse(this.url, true).query as Record<string, unknown>
   }
 
   private getOriginalUrl(): string {
