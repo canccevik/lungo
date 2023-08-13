@@ -17,8 +17,8 @@
       - [patch()](#apppatchpath-handler)
       - [post()](#apppostpath-handler)
       - [put()](#appputpath-handler)
-      - [on()](#apponeventname-callback)
       - [use()](#appusehandler)
+      - [onError()](#apponerrorerrorhandler)
   - [Request](#request)
     - [Properties](#properties)
       - [baseUrl](#reqbaseurl)
@@ -57,6 +57,7 @@
       - [METHOD](#routermethodpath-handler)
       - [use](#routerusehandler)
   - [Middlewares](#middlewares)
+    - [bodyParser()](#bodyparser)
     - [uploadFile()](#uploadfileoptions)
 - [Contributing](#contributing)
 - [License](#license)
@@ -571,6 +572,19 @@ app.use('/user', userRouter)
 ```
 
 ## Middlewares
+
+### bodyParser()
+
+The bodyParser() is a built-in middleware function in Lungo. It parses incoming requests with JSON payloads and injects them into the body property of the request object.
+
+```ts
+app.use(bodyParser())
+
+app.post('/access-body', (req: Request, res: Response) => {
+  // now you can access the req.body object
+  console.log(req.body)
+})
+```
 
 ### uploadFile(options?)
 

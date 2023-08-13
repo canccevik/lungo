@@ -1,7 +1,9 @@
+import { IHandler, INextFunc } from '../interfaces'
 import { Request } from '../request'
+import { Response } from '../response'
 
-export async function parseBody(req: Request): Promise<Request> {
-  return new Promise((resolve, reject) => {
+export function bodyParser(): IHandler {
+  return (req: Request, res: Response, next: INextFunc) => {
     let body = ''
 
     req.on('data', (chunk) => {
@@ -9,7 +11,7 @@ export async function parseBody(req: Request): Promise<Request> {
     })
 
     req.on('end', () => {
-      if (body.length === 0) return resolve(req)
+      if (body.length === 0) return next()
 
       const contentType = req.get('content-type')
 
@@ -20,21 +22,21 @@ export async function parseBody(req: Request): Promise<Request> {
       } else {
         req.body = body
       }
-      resolve(req)
+      next()
     })
 
     req.on('error', (error) => {
-      reject(error)
+      next(error)
     })
-  })
+  }
 }
 
-function parseBodyFromJson(body: string): Record<string, unknown> {
+function parseBodyFromJson(body: string): Record<string, object> {
   return JSON.parse(body)
 }
 
-function parseBodyFromForm(body: string): Record<string, unknown> {
-  const parsedBody: Record<string, unknown> = {}
+function parseBodyFromForm(body: string): Record<string, string> {
+  const parsedBody: Record<string, string> = {}
 
   body.split('&').forEach((formElement) => {
     const [key, value] = formElement.split('=')

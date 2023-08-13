@@ -1,6 +1,6 @@
 import request from 'supertest'
 import { Server } from 'http'
-import { Lungo, Request, Response, uploadFile } from '../src/index'
+import { Lungo, Request, Response, bodyParser, uploadFile } from '../src/index'
 import fs from 'fs'
 
 describe('Request Class', () => {
@@ -164,6 +164,10 @@ describe('Request Class', () => {
   })
 
   describe('body property', () => {
+    beforeEach(() => {
+      app.use(bodyParser())
+    })
+
     test('should serialize json', async () => {
       // arrange
       const newPackage = { packageName: 'lungo' }
@@ -312,22 +316,6 @@ describe('Request Class', () => {
 
       // assert
       expect(res.body).toEqual(false)
-    })
-
-    test('should return false when body is null', async () => {
-      // arrange
-      app.get('/test', (req: Request, res: Response) => {
-        const type = req.is('application/json') as any
-        res.send(type)
-      })
-
-      server = app.listen(3001)
-
-      // act
-      const res = await request(server).get('/test')
-
-      // assert
-      expect(res.body).toEqual(null)
     })
   })
 

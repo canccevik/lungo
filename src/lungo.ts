@@ -4,35 +4,21 @@ import { ErrorHandler, INextFunc } from './interfaces'
 import { Request } from './request'
 import { Response } from './response'
 import { Router } from './router'
-import { parseBody } from './utils'
 
 export class Lungo extends Router {
   private errorHandler?: ErrorHandler
 
   public listen(port: string | number): Server {
     if (!port) {
-      throw new Error('Port is not provided.')
+      throw new Error('Port is not provided!')
     }
 
     const handler = (req: IncomingMessage, res: ServerResponse): void => {
       const request = req as Request
       const response = res as Response
 
-      const initRequest = (parsedRequest?: Request): void => {
-        request.onMounted()
-        this.handleRequest(parsedRequest || request, response)
-      }
-
-      const contentType = request.get('content-type')?.split(';')[0]
-
-      if (contentType === 'multipart/form-data') {
-        initRequest()
-        return
-      }
-
-      parseBody(request)
-        .then((parsedRequest) => initRequest(parsedRequest))
-        .catch((error) => this.handleError(request, response, error))
+      request.onMounted()
+      this.handleRequest(request, response)
     }
 
     return http

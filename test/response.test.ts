@@ -105,20 +105,6 @@ describe('Response Class', () => {
       expect(jsonRes.get('Content-Type')).toEqual('application/json; charset=utf-8')
       expect(jsonRes.body).toEqual(payload)
     })
-
-    test('should throw error for disallowed type', async () => {
-      // arrange
-      app.get('/test', (req: Request, res: Response) => {
-        res.send(Symbol('symbol') as never)
-      })
-      server = app.listen(3001)
-
-      // act
-      const res = await request(server).get('/test')
-
-      // assert
-      expect(res.statusCode).toEqual(StatusCodes.INTERNAL_SERVER_ERROR)
-    })
   })
 
   describe('sendStatus method', () => {

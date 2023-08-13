@@ -3,7 +3,7 @@ import mimeTypes from 'mime-types'
 import qs from 'qs'
 
 export class Request extends IncomingMessage {
-  public body: any
+  public body: any = null
 
   public ip?: string
 
@@ -90,8 +90,6 @@ export class Request extends IncomingMessage {
   }
 
   public is(type: string): string | boolean | null {
-    if (!this.body) return null
-
     const contentType = this.get('content-type')
     const mimeType = mimeTypes.contentType(type).toString().split(';')[0]
 

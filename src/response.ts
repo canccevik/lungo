@@ -29,12 +29,10 @@ export class Response extends ServerResponse {
   public send(body: unknown): void {
     if (typeof body === 'string' || typeof body === 'number') {
       this.type('text/html')
-    } else if (typeof body === 'object' || typeof body === 'boolean') {
-      this.type('application/json')
     } else if ((body as Buffer) instanceof Buffer) {
       this.type('application/octet-stream')
     } else {
-      throw new Error('Type of body is not valid.')
+      this.type('application/json')
     }
 
     const response = typeof body === 'string' ? body : JSON.stringify(body)
