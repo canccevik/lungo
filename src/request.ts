@@ -4,21 +4,13 @@ import qs from 'qs'
 
 export class Request extends IncomingMessage {
   public body: any = null
-
   public ip?: string
-
   public originalUrl!: string
-
   public baseUrl!: string
-
   public path!: string
-
   public cookies?: Record<string, string>
-
   public params: Record<string, unknown> = {}
-
   public query: Record<string, unknown> = {}
-
   public files?: Record<string, Record<string, unknown>>
 
   public onMounted(): void {
