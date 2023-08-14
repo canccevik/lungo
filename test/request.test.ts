@@ -320,7 +320,7 @@ describe('Request Class', () => {
   })
 
   describe('files property', () => {
-    test('should be defined when uploadFile middleware used', async () => {
+    test('should be defined when fileUploader middleware used', async () => {
       // arrange
       fs.appendFileSync(__dirname + '/file.txt', 'test file')
 

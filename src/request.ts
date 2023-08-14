@@ -2,6 +2,7 @@ import { IncomingMessage } from 'http'
 import mimeTypes from 'mime-types'
 import accepts from 'accepts'
 import url from 'url'
+import { Socket } from 'net'
 
 export class Request extends IncomingMessage {
   public body: any = null
@@ -13,6 +14,10 @@ export class Request extends IncomingMessage {
   public params: Record<string, unknown> = {}
   public query: Record<string, unknown> = {}
   public files?: Record<string, Record<string, unknown>>
+
+  constructor(socket: Socket) {
+    super(socket)
+  }
 
   public onMounted(): void {
     this.ip = this.getIpAddress()

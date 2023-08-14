@@ -17,7 +17,7 @@ export function fileUploader(options: Options = defaultOptions): IHandler {
       if (error) {
         return next(error)
       }
-      req.body = fields
+      req.body = Object.fromEntries(Object.entries(fields).map(([key, value]) => [key, value[0]]))
       req.files = serializeFiles(files)
       next()
     })
@@ -30,7 +30,7 @@ function serializeFiles(files: Files): Record<string, Record<string, unknown>> {
     ...Object.keys(files).map((fileName) => {
       return {
         [fileName]: Object.fromEntries(
-          Object.entries(files[fileName]).filter(([key]) => !key.startsWith('_'))
+          Object.entries(files[fileName][0]).filter(([key]) => !key.startsWith('_'))
         )
       }
     })

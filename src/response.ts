@@ -1,4 +1,4 @@
-import { ServerResponse } from 'http'
+import { IncomingMessage, ServerResponse } from 'http'
 import mimeTypes from 'mime-types'
 import { getReasonPhrase, StatusCodes } from 'http-status-codes'
 import cookie, { CookieSerializeOptions } from 'cookie'
@@ -6,7 +6,13 @@ import path from 'path'
 import pug from 'pug'
 import fs from 'fs'
 
-export class Response extends ServerResponse {
+export class Response<
+  Request extends IncomingMessage = IncomingMessage
+> extends ServerResponse<Request> {
+  constructor(req: Request) {
+    super(req)
+  }
+
   public status(statusCode: number): this {
     this.statusCode = statusCode
     return this
